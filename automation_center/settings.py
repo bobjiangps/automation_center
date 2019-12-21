@@ -16,7 +16,7 @@ import json
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
-with open(os.path.join(BASE_DIR, "store.json"), "r") as store_file:
+with open(os.path.join(BASE_DIR, "config", "store.json"), "r") as store_file:
     STORED = json.load(store_file)
 
 
