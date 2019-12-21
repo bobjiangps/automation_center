@@ -12,9 +12,12 @@ https://docs.djangoproject.com/en/3.0/ref/settings/
 
 import os
 import json
+import sys
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+
+sys.path.insert(0, os.path.join(BASE_DIR, 'modules'))
 
 with open(os.path.join(BASE_DIR, "config", "store.json"), "r") as store_file:
     STORED = json.load(store_file)
@@ -43,7 +46,8 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'rest_framework',
-    'center'
+    'center',
+    'projects'
 ]
 
 MIDDLEWARE = [
