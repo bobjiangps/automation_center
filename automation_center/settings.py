@@ -19,7 +19,7 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 sys.path.insert(0, os.path.join(BASE_DIR, 'modules'))
 
-with open(os.path.join(BASE_DIR, "config", "store.json"), "r") as store_file:
+with open(os.path.join(BASE_DIR, "config", "config.json"), "r") as store_file:
     STORED = json.load(store_file)
 
 
@@ -46,6 +46,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'rest_framework',
+    'rest_framework_swagger',
     'center',
     'projects'
 ]

@@ -114,11 +114,29 @@ from rest_framework import generics
 
 
 class ProjectList(generics.ListCreateAPIView):
+    """
+        get:
+            Return all projects.
+
+        post:
+            Create a new project.
+    """
     queryset = Project.objects.all()
     serializer_class = ProjectSerializer
 
 
 # class ProjectDetail(generics.RetrieveUpdateDestroyAPIView):
 class ProjectDetail(generics.RetrieveUpdateAPIView):
+    """
+        get:
+            Return a project instance.
+
+        put:
+            Update a project.
+
+        patch:
+            Update one or more fields on an existing project.
+
+    """
     queryset = Project.objects.all()
     serializer_class = ProjectSerializer
