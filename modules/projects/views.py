@@ -7,7 +7,7 @@ from rest_framework import viewsets
 #     """
 #     this is the common usage with all request method, in this way, no need to add url.py in app
 #     """
-#     queryset = Project.objects.all()
+#     queryset = Project.objects.all().order_by("id")
 #     serializer_class = ProjectSerializer
 #
 #     # # 如果想禁用某一个方法，可以类似如下，但不如用generics.RetrieveUpdateAPIView
@@ -25,7 +25,7 @@ from rest_framework import viewsets
 # class ProjectList(APIView):
 #     # 定义 GET 请求的方法，内部实现相同 @api_view
 #     def get(self, request):
-#         projects = Project.objects.all()
+#         projects = Project.objects.all().order_by("id")
 #         serializer = ProjectSerializer(projects, many=True)
 #         return Response(serializer.data, status=status.HTTP_200_OK)
 #
@@ -121,7 +121,7 @@ class ProjectList(generics.ListCreateAPIView):
         post:
             Create a new project.
     """
-    queryset = Project.objects.all()
+    queryset = Project.objects.all().order_by("id")
     serializer_class = ProjectSerializer
 
 
