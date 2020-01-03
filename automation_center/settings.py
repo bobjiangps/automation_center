@@ -30,8 +30,8 @@ with open(os.path.join(BASE_DIR, "config", "config.json"), "r") as store_file:
 SECRET_KEY = STORED['secret_key']
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
-#DEBUG = False
+# DEBUG = True
+DEBUG = False
 
 ALLOWED_HOSTS = ['*']
 
