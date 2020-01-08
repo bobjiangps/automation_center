@@ -20,6 +20,7 @@ from center import views
 # from projects.views import ProjectViewSet
 from rest_framework.schemas import get_schema_view
 from rest_framework_swagger.renderers import SwaggerUIRenderer, OpenAPIRenderer
+from rest_framework.authtoken.views import obtain_auth_token
 
 
 router = routers.DefaultRouter()
@@ -36,5 +37,6 @@ urlpatterns = [
     path('automation/api/projects/', include('projects.urls')),
     path('automation/admin/', admin.site.urls),
     path('automation/api-auth/', include('rest_framework.urls', namespace='rest_framework')),
+    path('automation/api-token-auth/', obtain_auth_token, name='api_token_auth'),
     path('automation/api/docs/', schema_view, name='docs')
 ]
