@@ -111,6 +111,7 @@ from rest_framework import viewsets
 
 # the following two methods with apiview are used to customized http method for objects, with least code
 from rest_framework import generics
+from rest_framework.permissions import IsAuthenticatedOrReadOnly
 
 
 class ProjectList(generics.ListCreateAPIView):
@@ -121,6 +122,7 @@ class ProjectList(generics.ListCreateAPIView):
         post:
             Create a new project.
     """
+    permission_classes = [IsAuthenticatedOrReadOnly]
     queryset = Project.objects.all().order_by("id")
     serializer_class = ProjectSerializer
 
@@ -138,5 +140,6 @@ class ProjectDetail(generics.RetrieveUpdateAPIView):
             Update one or more fields on an existing project.
 
     """
+    permission_classes = [IsAuthenticatedOrReadOnly]
     queryset = Project.objects.all()
     serializer_class = ProjectSerializer
