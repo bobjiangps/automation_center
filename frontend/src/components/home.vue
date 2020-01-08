@@ -26,7 +26,7 @@ export default {
 
   methods: {
     getProjects() {
-      axios.get('http://127.0.0.1:8000/api/projects/').then(response => {this.projects = response.data["results"], this.msg = 'get projects data from django api'});
+      axios.get('http://127.0.0.1:8000/automation/api/projects/').then(response => {this.projects = response.data["results"], this.msg = 'get projects data from django api'});
     }
   }
 }

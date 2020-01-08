@@ -32,9 +32,9 @@ schema_view = get_schema_view(title='API DOC', renderer_classes=[SwaggerUIRender
 # Wire up our API using automatic URL routing.
 # Additionally, we include login URLs for the browsable API.
 urlpatterns = [
-    path('api/', include(router.urls)),
-    path('api/projects/', include('projects.urls')),
-    path('admin/', admin.site.urls),
-    path('api-auth/', include('rest_framework.urls', namespace='rest_framework')),
-    path('api/docs/', schema_view, name='docs')
+    path('automation/api/', include(router.urls)),
+    path('automation/api/projects/', include('projects.urls')),
+    path('automation/admin/', admin.site.urls),
+    path('automation/api-auth/', include('rest_framework.urls', namespace='rest_framework')),
+    path('automation/api/docs/', schema_view, name='docs')
 ]
