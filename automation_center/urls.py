@@ -16,17 +16,14 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import include, path
 from rest_framework import routers
-from center import views
-# from projects.views import ProjectViewSet
 from rest_framework.schemas import get_schema_view
 from rest_framework_swagger.renderers import SwaggerUIRenderer, OpenAPIRenderer
 from rest_framework.authtoken.views import obtain_auth_token
+from modules.users import views as u_views
 
 
 router = routers.DefaultRouter()
-router.register(r'users', views.UserViewSet)
-router.register(r'groups', views.GroupViewSet)
-# router.register(r'projects', ProjectViewSet)
+router.register(r'users', u_views.UserViewSet)
 
 schema_view = get_schema_view(title='API DOC', renderer_classes=[SwaggerUIRenderer, OpenAPIRenderer])
 

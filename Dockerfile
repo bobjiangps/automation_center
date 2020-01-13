@@ -8,6 +8,9 @@ RUN apt-get update && \
         python3-dev \
         python3-setuptools \
         python3-pip \
+        libsasl2-dev \
+        libldap2-dev \
+        libssl-dev \
         nginx && \
     rm -rf /var/lib/apt/lists/*
 
