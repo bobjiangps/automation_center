@@ -37,6 +37,6 @@ urlpatterns = [
     path('automation/api/projects/', include('projects.urls')),
     path('automation/admin/', admin.site.urls),
     path('automation/api-auth/', include('rest_framework.urls', namespace='rest_framework')),
-    path('automation/api-token-auth/', obtain_auth_token, name='api_token_auth'),
+    path('automation/api/api-token-auth/', obtain_auth_token, name='api_token_auth'),
     path('automation/api/docs/', schema_view, name='docs')
 ]
