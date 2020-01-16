@@ -2,8 +2,9 @@
   <div>
     <h3>{{ msg }}</h3>
     <button type="button" @click='getProjects' :style="{ margin: '10px', padding: '5px' }">get projects</button>
-    <button type="button" @click='getToken' :style="{ margin: '10px', padding: '5px' }">sign in</button>
-    <p v-if="auth.length > 0">user logged in</p>
+    <button v-if="auth.length == 0" type="button" @click='getToken' :style="{ margin: '10px', padding: '5px' }">Sign In</button>
+    <button v-else type="button" :style="{ margin: '10px', padding: '5px' }">Sign Out</button>
+    <p>{{ auth_text }}</p>
     <table v-if="auth.length > 0" :style="{ border: '2px solid gray', borderRadius: '5px', padding: '10px' }" align='center'>
       <tr v-for='a in auth'>
         <td>{{ a.id }}</td>
@@ -31,7 +32,8 @@ export default {
     return {
       msg: 'Projects in Automation Center',
       projects: [],
-      auth: []
+      auth: [],
+      auth_text: 'not sign in'
     }
   },
 
@@ -45,9 +47,10 @@ export default {
           "username": "bo",
           "password": "111111"
       }).then(response => {
+          this.auth_text = "Hello, bo"
           this.auth.push(response.data)
       }).catch(error => {
-          console.log("Error login")
+          this.auth_text = "Error when sign in "
           console.log(error)});
     }
   }
