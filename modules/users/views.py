@@ -55,5 +55,8 @@ class ObtainExpiringAuthToken(ObtainAuthToken):
                 else:
                     token.created = datetime.datetime.utcnow()
                     token.save()
-            return Response({'token': token.key})
+            return Response({"id": user.pk,
+                             "username": user.username,
+                             "mail": user.email,
+                             "token": token.key})
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
