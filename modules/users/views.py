@@ -45,11 +45,15 @@ class ObtainExpiringAuthToken(ObtainAuthToken):
             # utc_now = datetime.datetime.utcnow().replace(tzinfo=timezone.utc)
             utc_now = datetime.datetime.utcnow()
             print(utc_now)
-            if not created and token.created < utc_now - datetime.timedelta(hours=24):
-                print("re-generate token for old one is expired")
-                token.delete()
-                token = Token.objects.create(user=user)
-                token.created = datetime.datetime.utcnow()
-                token.save()
+            if not created:
+                if token.created < utc_now - datetime.timedelta(hours=12):
+                    print("re-generate token for old one is expired")
+                    token.delete()
+                    token = Token.objects.create(user=user)
+                    token.created = datetime.datetime.utcnow()
+                    token.save()
+                else:
+                    token.created = datetime.datetime.utcnow()
+                    token.save()
             return Response({'token': token.key})
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
