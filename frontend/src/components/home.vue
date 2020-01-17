@@ -4,7 +4,11 @@
     <button type="button" @click='getProjects' :style="{ margin: '10px', padding: '5px' }">get projects</button>
     <button v-if="auth.length == 0" type="button" @click='getToken' :style="{ margin: '10px', padding: '5px' }">Sign In</button>
     <button v-else type="button" :style="{ margin: '10px', padding: '5px' }">Sign Out</button>
+    <router-link to="/login" :style="{ margin: '10px', padding: '5px' }">Login</router-link>
+    <router-link v-if="this.$store.state.status" @click="logout" :style="{ margin: '10px', padding: '5px' }">Logout</router-link>
     <p>{{ auth_text }}</p>
+    <p>{{ this.$store.state.token }}</p>
+    <p>{{ this.$store.state.status }}</p>
     <table v-if="auth.length > 0" :style="{ border: '2px solid gray', borderRadius: '5px', padding: '10px' }" align='center'>
       <tr v-for='a in auth'>
         <td>{{ a.id }}</td>
@@ -26,6 +30,7 @@
 
 <script>
 import axios from 'axios'
+
 export default {
   name: 'Home',
   data () {
@@ -44,15 +49,16 @@ export default {
 
     getToken() {
       axios.post('http://127.0.0.1:8000/automation/api/api-token-auth/', {
-          "username": "bo",
-          "password": "111111"
+        "username": "bo",
+        "password": "111111"
       }).then(response => {
-          this.auth_text = "Hello, bo"
-          this.auth.push(response.data)
+        this.auth_text = "Hello, bo"
+        this.auth.push(response.data)
       }).catch(error => {
-          this.auth_text = "Error when sign in "
-          console.log(error)});
+        this.auth_text = "Error when sign in "
+        console.log(error)});
     }
+
   }
 }
 </script>
