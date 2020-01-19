@@ -2,13 +2,14 @@
   <div>
     <h3>{{ msg }}</h3>
     <button type="button" @click='getProjects' :style="{ margin: '10px', padding: '5px' }">get projects</button>
-    <button v-if="auth.length == 0" type="button" @click='getToken' :style="{ margin: '10px', padding: '5px' }">Sign In</button>
-    <button v-else type="button" :style="{ margin: '10px', padding: '5px' }">Sign Out</button>
-    <router-link to="/login" :style="{ margin: '10px', padding: '5px' }">Login</router-link>
-    <router-link v-if="this.$store.state.status" @click="logout" :style="{ margin: '10px', padding: '5px' }">Logout</router-link>
+    <a v-if="this.$store.state.token" @click="logout" :style="{ margin: '10px', padding: '5px' }">Logout</a>
+    <router-link v-else to="/login" :style="{ margin: '10px', padding: '5px' }">Login</router-link>
     <p>{{ auth_text }}</p>
     <p>{{ this.$store.state.token }}</p>
     <p>{{ this.$store.state.status }}</p>
+    <p>{{ this.$store.state.user }}</p>
+    <p>{{ this.$store.getters.isLoggedIn }}</p>
+    <p>{{ this.$store.getters.authStatus }}</p>
     <table v-if="auth.length > 0" :style="{ border: '2px solid gray', borderRadius: '5px', padding: '10px' }" align='center'>
       <tr v-for='a in auth'>
         <td>{{ a.id }}</td>
@@ -29,8 +30,6 @@
 </template>
 
 <script>
-import axios from 'axios'
-
 export default {
   name: 'Home',
   data () {
@@ -38,25 +37,29 @@ export default {
       msg: 'Projects in Automation Center',
       projects: [],
       auth: [],
-      auth_text: 'not sign in'
+      auth_text: ''
+    }
+  },
+
+ created: function() {
+    if (this.$store.state.token) {
+      this.auth_text = "user already logged in ";
+    }
+    else {
+      this.auth_text = "no user logged in";
     }
   },
 
   methods: {
     getProjects() {
-      axios.get('http://127.0.0.1:8000/automation/api/projects/').then(response => {this.projects = response.data["results"], this.msg = 'get projects data from django api'});
+      this.$http.get('http://127.0.0.1:8000/automation/api/projects/').then(response => {this.projects = response.data["results"], this.msg = 'get projects data from django api'});
     },
 
-    getToken() {
-      axios.post('http://127.0.0.1:8000/automation/api/api-token-auth/', {
-        "username": "bo",
-        "password": "111111"
-      }).then(response => {
-        this.auth_text = "Hello, bo"
-        this.auth.push(response.data)
-      }).catch(error => {
-        this.auth_text = "Error when sign in "
-        console.log(error)});
+    logout: function () {
+      this.$store.dispatch('logout')
+      .then(() => {
+        this.$router.push('/login')
+      })
     }
 
   }
