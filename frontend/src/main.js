@@ -3,8 +3,8 @@
 import Vue from 'vue'
 import App from './App'
 import router from './router'
-import store from './store'
-import axios from 'axios'
+import store from './utils/store'
+import axios from './utils/axios'
 
 Vue.prototype.$http = axios;
 const token = localStorage.getItem('token')

@@ -52,7 +52,15 @@ export default {
 
   methods: {
     getProjects() {
-      this.$http.get('http://127.0.0.1:8000/automation/api/projects/').then(response => {this.projects = response.data["results"], this.msg = 'get projects data from django api'});
+      this.$http.get(`${this.$http.defaults.baseURL}/projects/`)
+      .then(response => {this.projects = response.data["results"], this.msg = 'get projects data from django api'})
+      //.catch(err => {
+        //if (err.response.status === 401) {
+          //alert("not authenticated, please check if your token was expired")
+        //}
+        //this.$store.dispatch('logout')
+        //this.$router.push('/login')
+      //});
     },
 
     logout: function () {

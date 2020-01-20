@@ -8,6 +8,7 @@
      <input required v-model="password" type="password" placeholder="Password"/>
      <button type="submit">Login</button>
    </form>
+   <p style="color: red;">{{ msg }}</p>
  </div>
 </template>
 
@@ -15,8 +16,9 @@
 export default {
   data () {
     return {
-      username : "",
-      password : ""
+      username : '',
+      password : '',
+      msg: ''
     };
   },
 
@@ -25,7 +27,10 @@ export default {
       const { username, password } = this
       this.$store.dispatch('login', { username, password })
         .then(() => this.$router.push('/'))
-        .catch(err => console.log(err))
+        .catch(err => {
+          console.log(err)
+          this.msg = 'wrong username or password'
+        })
     }
   }
 };
