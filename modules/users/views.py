@@ -1,7 +1,7 @@
 from django.contrib.auth.models import User, Group
 from rest_framework import viewsets
 from .serializers import UserSerializer, GroupSerializer
-from rest_framework.permissions import IsAuthenticatedOrReadOnly
+from utils.permission import IsSuperUserOrReadOnly
 from django.utils import timezone
 from rest_framework import status
 from rest_framework.response import Response
@@ -27,7 +27,7 @@ class UserViewSet(viewsets.ModelViewSet):
         delete:
             Delete existing user.
     """
-    permission_classes = [IsAuthenticatedOrReadOnly]
+    permission_classes = [IsSuperUserOrReadOnly]
     queryset = User.objects.all().order_by('-date_joined')
     serializer_class = UserSerializer
 
@@ -49,8 +49,8 @@ class GroupViewSet(viewsets.ModelViewSet):
         delete:
             Delete existing group.
     """
-    permission_classes = [IsAuthenticatedOrReadOnly]
-    queryset = Group.objects.all().order_by('-id')
+    permission_classes = [IsSuperUserOrReadOnly]
+    queryset = Group.objects.all().order_by('id')
     serializer_class = GroupSerializer
 
 
