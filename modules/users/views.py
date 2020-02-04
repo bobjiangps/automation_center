@@ -1,6 +1,6 @@
-from django.contrib.auth.models import User
+from django.contrib.auth.models import User, Group
 from rest_framework import viewsets
-from .serializers import UserSerializer
+from .serializers import UserSerializer, GroupSerializer
 from rest_framework.permissions import IsAuthenticatedOrReadOnly
 from django.utils import timezone
 from rest_framework import status
@@ -30,6 +30,28 @@ class UserViewSet(viewsets.ModelViewSet):
     permission_classes = [IsAuthenticatedOrReadOnly]
     queryset = User.objects.all().order_by('-date_joined')
     serializer_class = UserSerializer
+
+
+class GroupViewSet(viewsets.ModelViewSet):
+    """
+        get:
+            Return all groups.
+
+        post:
+            Create a new group.
+
+        put:
+            Update a group.
+
+        patch:
+            Update one or more fields on an existing group.
+
+        delete:
+            Delete existing group.
+    """
+    permission_classes = [IsAuthenticatedOrReadOnly]
+    queryset = Group.objects.all().order_by('-id')
+    serializer_class = GroupSerializer
 
 
 class ObtainExpiringAuthToken(ObtainAuthToken):
