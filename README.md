@@ -9,8 +9,9 @@ created by django + restframework + vue.js + uwsgi + nginx
 * [Django restframework加Vue打造前后端分离的网站(三)在View中自定义API](https://www.byincd.com/bobjiang/article-0195/)
 * [Django restframework加Vue打造前后端分离的网站(四)生成接口文档](https://www.byincd.com/bobjiang/article-0196/)
 * [Django restframework加Vue打造前后端分离的网站(五)rest和vue的初步结合](https://www.byincd.com/bobjiang/article-0198/)
-* [Django restframework加Vue打造前后端分离的网站(六)认证和权限](https://www.byincd.com/bobjiang/article-0199/)
+* [Django restframework加Vue打造前后端分离的网站(六)token和LDAP认证](https://www.byincd.com/bobjiang/article-0199/)
 * [Django restframework加Vue打造前后端分离的网站(七)登录并保持状态](https://www.byincd.com/bobjiang/article-01102/)
+* [Django restframework加Vue打造前后端分离的网站(八)权限控制](https://www.byincd.com/bobjiang/article-01104/)
 * ...
 
 
