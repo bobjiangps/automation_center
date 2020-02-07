@@ -51,7 +51,7 @@ class ProjectListTest(APITestCase):
         response = self.client.post("/automation/api/projects/", data, format="json")
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
-    def test_staff_create_project_then_get_project_list(self):
+    def test_staff_cannot_create_project(self):
         self.client.credentials(HTTP_AUTHORIZATION="Token " + self.admin_token)
         self.client.put(f"/automation/api/users/{self.user_id}/", {"username": self.user_data["username"], "is_staff": True}, format="json")
 
@@ -62,10 +62,7 @@ class ProjectListTest(APITestCase):
         }
         self.client.credentials(HTTP_AUTHORIZATION="Token " + self.token)
         response = self.client.post("/automation/api/projects/", data, format="json")
-        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
-        response = self.client.get("/automation/api/projects/", format="json")
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(1, json.loads(response.content)["count"])
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
     def test_superuser_create_project_then_get_project_list(self):
         data = {
