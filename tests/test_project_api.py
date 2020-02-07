@@ -9,12 +9,22 @@ from django.contrib.auth.models import User
 class ProjectListTest(APITestCase):
 
     def setUp(self):
-        user_data = {
-            "username": "bob",
+        self.admin_data = {
+            "username": "admin",
+            "email": "admin@test.com",
             "password": "123456"
         }
-        self.user = User.objects.create_user(username=user_data["username"], password=user_data["password"])
-        self.token = json.loads(self.client.post("/automation/api/api-token-auth/", user_data, format="json").content)["token"]
+        self.admin = User.objects.create_superuser(username=self.admin_data["username"], email=self.admin_data["email"], password=self.admin_data["password"])
+        self.admin_token = json.loads(self.client.post("/automation/api/api-token-auth/", self.admin_data, format="json").content)["token"]
+
+        self.user_data = {
+            "username": "bob",
+            "password": "111111"
+        }
+        self.user = User.objects.create_user(username=self.user_data["username"], password=self.user_data["password"])
+        user_response = json.loads(self.client.post("/automation/api/login/", self.user_data, format="json").content)
+        self.token = user_response["token"]
+        self.user_id = user_response["id"]
 
     def test_get_project_list(self):
         response = self.client.get("/automation/api/projects/", format="json")
@@ -31,7 +41,20 @@ class ProjectListTest(APITestCase):
         response = self.client.post("/automation/api/projects/", data, format="json")
         self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
 
-    def test_create_project_then_get_project_list(self):
+    def test_unable_to_create_project_if_authenticated_but_not_staff_or_superuser(self):
+        data = {
+            "name": "debug",
+            "create_time": "2019-12-22T00:58:00",
+            "update_time": "2019-12-23T00:59:00"
+        }
+        self.client.credentials(HTTP_AUTHORIZATION="Token " + self.token)
+        response = self.client.post("/automation/api/projects/", data, format="json")
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+
+    def test_staff_create_project_then_get_project_list(self):
+        self.client.credentials(HTTP_AUTHORIZATION="Token " + self.admin_token)
+        self.client.put(f"/automation/api/users/{self.user_id}/", {"username": self.user_data["username"], "is_staff": True}, format="json")
+
         data = {
             "name": "debug",
             "create_time": "2019-12-22T00:58:00",
@@ -44,17 +67,40 @@ class ProjectListTest(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(1, json.loads(response.content)["count"])
 
+    def test_superuser_create_project_then_get_project_list(self):
+        data = {
+            "name": "debug",
+            "create_time": "2019-12-22T00:58:00",
+            "update_time": "2019-12-23T00:59:00"
+        }
+        self.client.credentials(HTTP_AUTHORIZATION="Token " + self.admin_token)
+        response = self.client.post("/automation/api/projects/", data, format="json")
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        response = self.client.get("/automation/api/projects/", format="json")
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(1, json.loads(response.content)["count"])
+
 
 class ProjectDetailTest(TestCase):
 
     def setUp(self):
         self.client = APIClient()
-        user_data = {
-            "username": "bob",
+        self.admin_data = {
+            "username": "admin",
+            "email": "admin@test.com",
             "password": "123456"
         }
-        self.user = User.objects.create_user(username=user_data["username"], password=user_data["password"])
-        self.token = json.loads(self.client.post("/automation/api/api-token-auth/", user_data, format="json").content)["token"]
+        self.admin = User.objects.create_superuser(username=self.admin_data["username"], email=self.admin_data["email"], password=self.admin_data["password"])
+        self.admin_token = json.loads(self.client.post("/automation/api/api-token-auth/", self.admin_data, format="json").content)["token"]
+
+        self.user_data = {
+            "username": "bob",
+            "password": "111111"
+        }
+        self.user = User.objects.create_user(username=self.user_data["username"], password=self.user_data["password"])
+        user_response = json.loads(self.client.post("/automation/api/login/", self.user_data, format="json").content)
+        self.token = user_response["token"]
+        self.user_id = user_response["id"]
 
     def test_unable_to_update_project_if_not_authenticated(self):
         data = {
@@ -62,7 +108,7 @@ class ProjectDetailTest(TestCase):
             "create_time": "2019-12-22T00:58:00",
             "update_time": "2019-12-23T00:59:00"
         }
-        self.client.credentials(HTTP_AUTHORIZATION="Token " + self.token)
+        self.client.credentials(HTTP_AUTHORIZATION="Token " + self.admin_token)
         self.client.post("/automation/api/projects/", data)
         new_data = {
             "name": "debug2",
@@ -74,28 +120,68 @@ class ProjectDetailTest(TestCase):
         response_put = self.client.put(f"/automation/api/projects/{project_id}/", new_data, format="json")
         self.assertEqual(response_put.status_code, status.HTTP_401_UNAUTHORIZED)
 
+    def test_unable_to_update_project_if_authenticated_but_not_staff_or_superuser(self):
+        data = {
+            "name": "debug",
+            "create_time": "2019-12-22T00:58:00",
+            "update_time": "2019-12-23T00:59:00"
+        }
+        self.client.credentials(HTTP_AUTHORIZATION="Token " + self.admin_token)
+        self.client.post("/automation/api/projects/", data)
+        new_data = {
+            "name": "debug2",
+            "create_time": "2019-12-25T00:58:00",
+            "update_time": "2019-12-26T00:59:00"
+        }
+        self.client.credentials(HTTP_AUTHORIZATION="Token " + self.token)
+        project_id = json.loads(self.client.get("/automation/api/projects/", format="json").content)["results"][0]["id"]
+        response_put = self.client.put(f"/automation/api/projects/{project_id}/", new_data, format="json")
+        self.assertEqual(response_put.status_code, status.HTTP_403_FORBIDDEN)
+
+    def test_unable_to_update_project_if_staff_but_not_superuser(self):
+        data = {
+            "name": "debug",
+            "create_time": "2019-12-22T00:58:00",
+            "update_time": "2019-12-23T00:59:00"
+        }
+        self.client.credentials(HTTP_AUTHORIZATION="Token " + self.admin_token)
+        self.client.post("/automation/api/projects/", data)
+        self.client.put(f"/automation/api/users/{self.user_id}/", {"username": self.user_data["username"], "is_staff": True}, format="json")
+
+        new_data = {
+            "name": "debug2",
+            "create_time": "2019-12-25T00:58:00",
+            "update_time": "2019-12-26T00:59:00"
+        }
+        self.client.credentials(HTTP_AUTHORIZATION="Token " + self.token)
+        project_id = json.loads(self.client.get("/automation/api/projects/", format="json").content)["results"][0]["id"]
+        response_put = self.client.put(f"/automation/api/projects/{project_id}/", new_data, format="json")
+        self.assertEqual(response_put.status_code, status.HTTP_403_FORBIDDEN)
+        self.client.put(f"/automation/api/users/{self.user_id}/", {"username": self.user_data["username"], "is_staff": False}, format="json")
+
     def test_get_project_detail(self):
         data = {
             "name": "debug",
             "create_time": "2019-12-22T00:58:00",
             "update_time": "2019-12-23T00:59:00"
         }
-        self.client.credentials(HTTP_AUTHORIZATION="Token " + self.token)
+        self.client.credentials(HTTP_AUTHORIZATION="Token " + self.admin_token)
         self.client.post("/automation/api/projects/", data)
         project_id = json.loads(self.client.get("/automation/api/projects/", format="json").content)["results"][0]["id"]
+        self.client.credentials(HTTP_AUTHORIZATION="")
         response = self.client.get(f"/automation/api/projects/{project_id}/", format="json")
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(data["name"], json.loads(response.content)["name"])
         self.assertEqual(data["create_time"], json.loads(response.content)["create_time"])
         self.assertEqual(data["update_time"], json.loads(response.content)["update_time"])
 
-    def test_update_project_detail(self):
+    def test_update_project_detail_when_superuser(self):
         data = {
             "name": "debug",
             "create_time": "2019-12-22T00:58:00",
             "update_time": "2019-12-23T00:59:00"
         }
-        self.client.credentials(HTTP_AUTHORIZATION="Token " + self.token)
+        self.client.credentials(HTTP_AUTHORIZATION="Token " + self.admin_token)
         self.client.post("/automation/api/projects/", data)
         new_data = {
             "name": "debug2",
@@ -111,13 +197,38 @@ class ProjectDetailTest(TestCase):
         self.assertEqual(new_data["create_time"], json.loads(response.content)["create_time"])
         self.assertEqual(new_data["update_time"], json.loads(response.content)["update_time"])
 
+    def test_update_project_detail_when_project_owner(self):
+        data = {
+            "name": "debug",
+            "create_time": "2019-12-22T00:58:00",
+            "update_time": "2019-12-23T00:59:00"
+        }
+        self.client.credentials(HTTP_AUTHORIZATION="Token " + self.admin_token)
+        self.client.post("/automation/api/projects/", data)
+        project_id = json.loads(self.client.get("/automation/api/projects/", format="json").content)["results"][0]["id"]
+        self.client.put(f"/automation/api/projects/{project_id}/", {"name": "debug", "owner": [self.user_id]}, format="json")
+
+        new_data = {
+            "name": "debug2",
+            "create_time": "2019-12-25T00:58:00",
+            "update_time": "2019-12-26T00:59:00"
+        }
+        self.client.credentials(HTTP_AUTHORIZATION="Token " + self.token)
+        response_put = self.client.put(f"/automation/api/projects/{project_id}/", new_data, format="json")
+        self.assertEqual(response_put.status_code, status.HTTP_200_OK)
+        response = self.client.get(f"/automation/api/projects/{project_id}/", format="json")
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(new_data["name"], json.loads(response.content)["name"])
+        self.assertEqual(new_data["create_time"], json.loads(response.content)["create_time"])
+        self.assertEqual(new_data["update_time"], json.loads(response.content)["update_time"])
+
     def test_update_project_detail_partial(self):
         data = {
             "name": "debug",
             "create_time": "2019-12-22T00:58:00",
             "update_time": "2019-12-23T00:59:00"
         }
-        self.client.credentials(HTTP_AUTHORIZATION="Token " + self.token)
+        self.client.credentials(HTTP_AUTHORIZATION="Token " + self.admin_token)
         self.client.post("/automation/api/projects/", data)
         new_data = {
             "name": "debug_update",
@@ -137,7 +248,7 @@ class ProjectDetailTest(TestCase):
             "create_time": "2019-12-22T00:58:00",
             "update_time": "2019-12-23T00:59:00"
         }
-        self.client.credentials(HTTP_AUTHORIZATION="Token " + self.token)
+        self.client.credentials(HTTP_AUTHORIZATION="Token " + self.admin_token)
         self.client.post("/automation/api/projects/", data)
         project_id = json.loads(self.client.get("/automation/api/projects/", format="json").content)["results"][0]["id"]
         response_delete = self.client.delete(f"/automation/api/projects/{project_id}/")
