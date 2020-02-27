@@ -111,6 +111,8 @@ from rest_framework import viewsets
 
 # the following two methods with apiview are used to customized http method for objects, with least code
 from rest_framework import generics
+from rest_framework.views import APIView
+from rest_framework.response import Response
 from utils.permission import IsSpecifiedProjectOrReadOnly, IsSuperUserOrReadOnly
 
 
@@ -142,3 +144,15 @@ class ProjectDetail(generics.RetrieveUpdateAPIView):
     permission_classes = [IsSpecifiedProjectOrReadOnly]
     queryset = Project.objects.all()
     serializer_class = ProjectSerializer
+
+
+class ProjectAmount(APIView):
+
+    permission_classes = [IsSpecifiedProjectOrReadOnly]
+
+    def get(self, request):
+        """
+        Return amount of current projects.
+        """
+        count = {"count": Project.objects.count()}
+        return Response(count)
