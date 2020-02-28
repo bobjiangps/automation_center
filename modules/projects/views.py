@@ -156,3 +156,29 @@ class ProjectAmount(APIView):
         """
         count = {"count": Project.objects.count()}
         return Response(count)
+
+
+class ExampleParameterInUrl(APIView):
+
+    permission_classes = [IsSpecifiedProjectOrReadOnly]
+
+    def get(self, request, project_id, user_id):
+        """
+        Example to pass parameters from url
+        """
+        print(request.parser_context["kwargs"])
+        count = {"count": Project.objects.count(), "project_id": project_id, "user_id": user_id}
+        return Response(count)
+
+
+class ExampleParameterInRequest(APIView):
+
+    permission_classes = [IsSpecifiedProjectOrReadOnly]
+
+    def get(self, request):
+        """
+        Example to pass parameters in request data
+        """
+        print(request.data)
+        count = {"count": Project.objects.count(), "project_id": request.data["project_id"], "user_id": request.data["user_id"]}
+        return Response(count)
