@@ -251,3 +251,33 @@ class ProjectDetailTest(TestCase):
         response_delete = self.client.delete(f"/automation/api/projects/{project_id}/")
         self.assertEqual(response_delete.status_code, status.HTTP_405_METHOD_NOT_ALLOWED)
         self.assertEqual({'detail': '方法 “DELETE” 不被允许。'}, json.loads(response_delete.content))
+
+
+class ProjectAmountTest(APITestCase):
+
+    def setUp(self):
+        self.admin_data = {
+            "username": "admin",
+            "email": "admin@test.com",
+            "password": "123456"
+        }
+        self.admin = User.objects.create_superuser(username=self.admin_data["username"], email=self.admin_data["email"], password=self.admin_data["password"])
+        self.admin_token = json.loads(self.client.post("/automation/api/api-token-auth/", self.admin_data, format="json").content)["token"]
+
+    def test_get_project_amount(self):
+        self.client.credentials(HTTP_AUTHORIZATION="")
+        response = self.client.get("/automation/api/projects/amount/")
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(0, json.loads(response.content)["count"])
+        data = {
+            "name": "debug",
+            "create_time": "2019-12-22T00:58:00Z",
+            "update_time": "2019-12-23T00:59:00Z"
+        }
+        self.client.credentials(HTTP_AUTHORIZATION="Token " + self.admin_token)
+        response = self.client.post("/automation/api/projects/", data, format="json")
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        self.client.credentials(HTTP_AUTHORIZATION="")
+        response = self.client.get("/automation/api/projects/amount/")
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(1, json.loads(response.content)["count"])
