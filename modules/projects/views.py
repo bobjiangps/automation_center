@@ -113,6 +113,7 @@ from rest_framework import viewsets
 from rest_framework import generics
 from rest_framework.views import APIView
 from rest_framework.response import Response
+from rest_framework import filters
 from utils.permission import IsSpecifiedProjectOrReadOnly, IsSuperUserOrReadOnly
 
 
@@ -127,6 +128,8 @@ class ProjectList(generics.ListCreateAPIView):
     permission_classes = [IsSuperUserOrReadOnly]
     queryset = Project.objects.all().order_by("id")
     serializer_class = ProjectSerializer
+    filter_backends = [filters.SearchFilter]
+    search_fields = ["name", "=project_type"]
 
 
 class ProjectDetail(generics.RetrieveUpdateAPIView):

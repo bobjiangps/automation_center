@@ -77,6 +77,65 @@ class ProjectListTest(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(1, json.loads(response.content)["count"])
 
+    def test_search_project_partial_name_fully_name(self):
+        data = {
+            "name": "debug1",
+            "create_time": "2019-12-22T00:58:00Z",
+            "update_time": "2019-12-23T00:59:00Z"
+        }
+        self.client.credentials(HTTP_AUTHORIZATION="Token " + self.admin_token)
+        self.client.post("/automation/api/projects/", data, format="json")
+        data["name"] = "debug2"
+        self.client.post("/automation/api/projects/", data, format="json")
+        self.client.credentials(HTTP_AUTHORIZATION="")
+        response = self.client.get("/automation/api/projects/?s=debug", format="json")
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(2, json.loads(response.content)["count"])
+        response = self.client.get("/automation/api/projects/?s=debug1", format="json")
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(1, json.loads(response.content)["count"])
+
+    def test_search_project_keyword_should_fully_match_type(self):
+        data = {
+            "name": "debug1",
+            "project_type": "internal",
+            "create_time": "2019-12-22T00:58:00Z",
+            "update_time": "2019-12-23T00:59:00Z"
+        }
+        self.client.credentials(HTTP_AUTHORIZATION="Token " + self.admin_token)
+        self.client.post("/automation/api/projects/", data, format="json")
+        data["name"] = "debug2"
+        self.client.post("/automation/api/projects/", data, format="json")
+        data["name"] = "debug3"
+        data["project_type"] = "public"
+        self.client.post("/automation/api/projects/", data, format="json")
+        self.client.credentials(HTTP_AUTHORIZATION="")
+        response = self.client.get("/automation/api/projects/?s=inter", format="json")
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(0, json.loads(response.content)["count"])
+        response = self.client.get("/automation/api/projects/?s=internal1", format="json")
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(0, json.loads(response.content)["count"])
+        response = self.client.get("/automation/api/projects/?s=internal", format="json")
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(2, json.loads(response.content)["count"])
+        response = self.client.get("/automation/api/projects/?s=public", format="json")
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(1, json.loads(response.content)["count"])
+
+    def test_search_project_not_match(self):
+        data = {
+            "name": "debug1",
+            "create_time": "2019-12-22T00:58:00Z",
+            "update_time": "2019-12-23T00:59:00Z"
+        }
+        self.client.credentials(HTTP_AUTHORIZATION="Token " + self.admin_token)
+        self.client.post("/automation/api/projects/", data, format="json")
+        self.client.credentials(HTTP_AUTHORIZATION="")
+        response = self.client.get("/automation/api/projects/?s=notmatch", format="json")
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(0, json.loads(response.content)["count"])
+
 
 class ProjectDetailTest(TestCase):
 
