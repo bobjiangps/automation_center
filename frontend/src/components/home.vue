@@ -2,6 +2,7 @@
   <div>
     <h3>{{ msg }}</h3>
     <button type="button" @click='getProjects' :style="{ margin: '10px', padding: '5px' }">get projects</button>
+    <a-button type="primary">Button</a-button>
     <a v-if="this.$store.state.token" @click="logout" :style="{ margin: '10px', padding: '5px' }">Logout</a>
     <router-link v-else to="/login" :style="{ margin: '10px', padding: '5px' }">Login</router-link>
     <p>{{ auth_text }}</p>

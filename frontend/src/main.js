@@ -5,6 +5,17 @@ import App from './App'
 import router from './router'
 import store from './utils/store'
 import axios from './utils/axios'
+import Antd from 'ant-design-vue'
+import 'ant-design-vue/dist/antd.css'
+import { library } from '@fortawesome/fontawesome-svg-core'
+import { faChartArea } from '@fortawesome/free-solid-svg-icons'
+import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
+
+library.add(faChartArea)
+
+Vue.component('font-awesome-icon', FontAwesomeIcon)
+
+Vue.use(Antd)
 
 Vue.prototype.$http = axios;
 const token = localStorage.getItem('token')
