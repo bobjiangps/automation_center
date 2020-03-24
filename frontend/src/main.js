@@ -8,10 +8,12 @@ import axios from './utils/axios'
 import Antd from 'ant-design-vue'
 import 'ant-design-vue/dist/antd.css'
 import { library } from '@fortawesome/fontawesome-svg-core'
+//import { faAutoprefixer } from '@fortawesome/free-brands-svg-icons'
 import { faChartArea } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 
 library.add(faChartArea)
+//library.add(faAutoprefixer)
 
 Vue.component('font-awesome-icon', FontAwesomeIcon)
 
