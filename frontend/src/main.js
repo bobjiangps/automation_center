@@ -9,13 +9,15 @@ import Antd from 'ant-design-vue'
 import 'ant-design-vue/dist/antd.less'
 import { library } from '@fortawesome/fontawesome-svg-core'
 //import { faAutoprefixer } from '@fortawesome/free-brands-svg-icons'
-import { faChartArea } from '@fortawesome/free-solid-svg-icons'
-import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
+import { faChartArea, faBell } from '@fortawesome/free-solid-svg-icons'
+import { FontAwesomeIcon, FontAwesomeLayers, FontAwesomeLayersText } from '@fortawesome/vue-fontawesome'
 
-library.add(faChartArea)
+library.add(faChartArea, faBell)
 //library.add(faAutoprefixer)
 
 Vue.component('font-awesome-icon', FontAwesomeIcon)
+Vue.component('font-awesome-layers', FontAwesomeLayers)
+Vue.component('font-awesome-layers-text', FontAwesomeLayersText)
 
 Vue.use(Antd)
 
