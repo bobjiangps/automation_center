@@ -27,11 +27,7 @@
       <a-layout>
         <a-affix style="height: 64px">
           <a-layout-header style="background: #fff; border-bottom: 1px solid #e8e8e8;">
-            <div class="logo">
-              <router-link to="/">
-                <h1>Automation Center</h1>
-              </router-link>
-            </div>
+            <a-input-search placeholder="input keyword..." @search="onSearch" enterButton style="width: 40%; margin: 15px 0px; float: left;" />
           </a-layout-header>
         </a-affix>
         <a-layout-footer style="text-align: center">
@@ -81,9 +77,11 @@ export default {
     onCollapse(collapsed, type) {
       console.log(collapsed, type);
     },
+
     onBreakpoint(broken) {
       console.log(broken);
     },
+
     onOpenChange(openKeys) {
       const latestOpenKey = openKeys.find(key => this.openKeys.indexOf(key) === -1);
       if (this.rootSubmenuKeys.indexOf(latestOpenKey) === -1) {
@@ -91,6 +89,10 @@ export default {
       } else {
         this.openKeys = latestOpenKey ? [latestOpenKey] : [];
       }
+    },
+
+    onSearch(value) {
+        console.log(value);
     },
   },
 
@@ -103,7 +105,6 @@ export default {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-align: center;
-  color: #2c3e50;
 }
 
 .logo {
