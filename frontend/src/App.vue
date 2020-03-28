@@ -42,8 +42,12 @@
                 <font-awesome-layers class="fa-layers-counter fa-layers-top-right">{{ notifications }}</font-awesome-layers>
               </font-awesome-layers>&emsp;{{ notifications }}
               <a-divider type="vertical" />
-              Bob Jiang
-              <img src="./assets/niming-no-gender.png" style="margin: 5px; width: 30px; height: 30px; border-radius: 50%;">
+              <!--Bob Jiang
+              <img src="./assets/niming-no-gender.png" style="margin: 5px; width: 30px; height: 30px; border-radius: 50%;">-->
+              <img v-if="this.$store.state.token" src="./assets/niming-no-gender.png" style="margin: 5px; width: 30px; height: 30px; border-radius: 50%;">
+              <span v-if="this.$store.state.token">Hi, {{ this.$store.state.user }}</span>
+              <a v-if="this.$store.state.token" @click="logout" :style="{ margin: '10px', padding: '5px' }">Logout</a>
+              <router-link v-else to="/login" :style="{ margin: '10px', padding: '5px' }">Login</router-link>
             </div>
           </a-layout-header>
         </a-affix>
@@ -114,6 +118,13 @@ export default {
     onSearch(value) {
         console.log(value);
     },
+
+    logout: function () {
+      this.$store.dispatch('logout')
+      .then(() => {
+        this.$router.push('/login')
+      })
+    }
   },
 
   computed: {
