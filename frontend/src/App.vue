@@ -25,39 +25,36 @@
         </a-menu>
       </a-layout-sider>
       <a-layout>
-        <a-affix style="height: 64px">
-          <a-layout-header style="background: #fff; border-bottom: 1px solid #e8e8e8;">
-            <a-input-search placeholder="input keyword..." @search="onSearch" enterButton style="width: 40%; margin: 15px 0px; float: left;" />
-            <div id="header-right" style="float: right;">
-              <!--<font-awesome-layers full-width class="fa-2x">
-                <font-awesome-icon :icon="[ 'fas', 'bell' ]" />
-                <span class="fa-layers-counter">10+</span>
-              </font-awesome-layers>
-              <font-awesome-layers>
-                <font-awesome-icon :icon="['fas', 'bell']" />
-                <font-awesome-layers-text counter value="3" position="top-right" />
-              </font-awesome-layers>&emsp;3-->
-              <font-awesome-layers class="fa-fw fa-1x">
-                <font-awesome-icon :icon="[ 'fas', 'bell' ]" />
-                <font-awesome-layers class="fa-layers-counter fa-layers-top-right">{{ notifications }}</font-awesome-layers>
-              </font-awesome-layers>&emsp;{{ notifications }}
-              <a-divider type="vertical" />
-              <!--Bob Jiang
-              <img src="./assets/niming-no-gender.png" style="margin: 5px; width: 30px; height: 30px; border-radius: 50%;">-->
-              <img v-if="this.$store.state.token" src="./assets/niming-no-gender.png" style="margin: 5px; width: 30px; height: 30px; border-radius: 50%;">
-              <span v-if="this.$store.state.token">Hi, {{ this.$store.state.user }}</span>
-              <a v-if="this.$store.state.token" @click="logout" :style="{ margin: '10px', padding: '5px' }">Logout</a>
-              <router-link v-else to="/login" :style="{ margin: '10px', padding: '5px' }">Login</router-link>
-            </div>
-          </a-layout-header>
-        </a-affix>
+        <a-layout-header style="background: #fff; border-bottom: 1px solid #e8e8e8;">
+          <a-input-search placeholder="input keyword..." @search="onSearch" enterButton style="width: 40%; margin: 15px 0px; float: left;" />
+          <div id="header-right" style="float: right;">
+            <!--<font-awesome-layers full-width class="fa-2x">
+              <font-awesome-icon :icon="[ 'fas', 'bell' ]" />
+              <span class="fa-layers-counter">10+</span>
+            </font-awesome-layers>
+            <font-awesome-layers>
+              <font-awesome-icon :icon="['fas', 'bell']" />
+              <font-awesome-layers-text counter value="3" position="top-right" />
+            </font-awesome-layers>&emsp;3-->
+            <font-awesome-layers class="fa-fw fa-1x">
+              <font-awesome-icon :icon="[ 'fas', 'bell' ]" />
+              <font-awesome-layers class="fa-layers-counter fa-layers-top-right">{{ notifications }}</font-awesome-layers>
+            </font-awesome-layers>&emsp;{{ notifications }}
+            <a-divider type="vertical" />
+            <!--Bob Jiang
+            <img src="./assets/niming-no-gender.png" style="margin: 5px; width: 30px; height: 30px; border-radius: 50%;">-->
+            <img v-if="this.$store.state.token" src="./assets/niming-no-gender.png" style="margin: 5px; width: 30px; height: 30px; border-radius: 50%;">
+            <span v-if="this.$store.state.token">Hi, {{ this.$store.state.user }}</span>
+            <a v-if="this.$store.state.token" @click="logout" :style="{ margin: '10px', padding: '5px' }">Logout</a>
+            <router-link v-else to="/login" :style="{ margin: '10px', padding: '5px' }">Login</router-link>
+          </div>
+        </a-layout-header>
+        <router-view/>
         <a-layout-footer style="text-align: center">
           {{ fullCopyRight }}
         </a-layout-footer>
       </a-layout>
     </a-layout>
-    <img src="./assets/icons8-automation-64.png">
-    <router-view/>
   </div>
 </template>
 
