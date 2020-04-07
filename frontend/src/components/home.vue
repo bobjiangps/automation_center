@@ -2,20 +2,20 @@
   <div style="margin: 20px;">
     <a-row type="flex" justify="space-around">
       <a-col :span="7" :style="{ padding: '10px', backgroundColor: '#FFF', textAlign: 'left', border: 'solid', borderColor: '#FFF #FFF #FFF #1874CD' }">
-        <h2 :style="{ color: '#1874CD', padding: '5px 0px 0px 0px' }">Projects Total:
-          <span id="projects-total-count" :style="{ color: '#1C1C1C' }">3</span>
+        <h2 :style="{ color: '#1874CD', padding: '5px 0px 0px 0px', fontWeight: 'bold' }">Projects Total:
+          <span id="projects-total-count">3</span>
           <font-awesome-icon :icon="[ 'fas', 'project-diagram' ]" :style="{ float: 'right', padding: '5px 0px 0px 0px' }" />
         </h2>
       </a-col>
       <a-col :span="7" :style="{ padding: '10px', backgroundColor: '#FFF', textAlign: 'left', border: 'solid', borderColor: '#FFF #FFF #FFF #6CA6CD' }">
-        <h2 :style="{ color: '#6CA6CD', padding: '5px 0px 0px 0px' }">Projects Running:
-          <span id="projects-running-count" :style="{ color: '#1C1C1C' }">1</span>
+        <h2 :style="{ color: '#6CA6CD', padding: '5px 0px 0px 0px', fontWeight: 'bold' }">Projects Running:
+          <span id="projects-running-count">1</span>
           <font-awesome-icon :icon="[ 'fas', 'running' ]" :style="{ float: 'right', padding: '5px 0px 0px 0px' }" />
         </h2>
       </a-col>
       <a-col :span="7" :style="{ padding: '10px', backgroundColor: '#FFF', textAlign: 'left', border: 'solid', borderColor: '#FFF #FFF #FFF #1CC88A' }">
-        <h2 :style="{ color: '#1CC88A', padding: '5px 0px 0px 0px' }">Automated Cases:
-          <span id="automated-cases-count" :style="{ color: '#1C1C1C' }">128</span>
+        <h2 :style="{ color: '#1CC88A', padding: '5px 0px 0px 0px', fontWeight: 'bold' }">Automated Cases:
+          <span id="automated-cases-count">128</span>
           <font-awesome-icon :icon="[ 'fas', 'clipboard-check' ]" :style="{ float: 'right', padding: '5px 0px 0px 0px' }" />
         </h2>
       </a-col>
