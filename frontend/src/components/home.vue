@@ -110,15 +110,22 @@ export default {
       //  text: 'Automation Coverage by Project',
       //  left: 'center'
       //},
+      tooltip: {
+        trigger: 'item',
+        formatter:'{b}: {c}%'
+      },
       xAxis: {
         type: 'category',
         data: ['ByBlog', 'MobileSTF', 'RestAPI']
       },
       yAxis: {
-        type: 'value'
+        type: 'value',
+        axisLabel: {
+          formatter: '{value} %'
+        }
       },
       series: [{
-        data: [90, 200, 150],
+        data: [90, 60, 100],
         type: 'bar',
         itemStyle: {
           normal: {
@@ -129,6 +136,11 @@ export default {
                 index = params.dataIndex - colorList.length;
               }
               return colorList[index];
+            },
+            label: {
+               show: true,
+               position: 'top',
+               formatter: '{c}%'
             }
           }
         }
