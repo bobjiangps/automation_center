@@ -21,13 +21,15 @@
       </a-col>
     </a-row>
     <a-row type="flex" justify="space-around" :style="{backgroundColor: '#FFF', margin: '20px'}">
-      <a-col :span="10">
+      <a-col :span="11">
         <a-card title="Automation Coverage by Project" :style="{margin: '20px 0px'}" :headStyle="{color:'#1874CD', fontWeight: 'bold'}">
           <div id="coverageByProjects" :style="{width: '90%', height: '400px'}"></div>
         </a-card>
       </a-col>
-      <a-col :span="10">
-        <div id="coverageDiffByProjects" :style="{width: '300px', height: '300px', margin: '20px 0px'}"></div>
+      <a-col :span="11">
+        <a-card title="Automation Coverage Diff to Last Year" :style="{margin: '20px 0px'}" :headStyle="{color:'#1874CD', fontWeight: 'bold'}">
+          <div id="coverageDiffByYear" :style="{width: '90%', height: '400px'}"></div>
+        </a-card>
       </a-col>
     </a-row>
     <h3>{{ msg }}</h3>
@@ -69,7 +71,8 @@ export default {
       projects: [],
       auth: [],
       auth_text: '',
-      coverage_by_projects_chart: ''
+      coverage_by_projects_chart: '',
+      coverage_diff_by_year_chart: ''
     }
   },
 
@@ -125,7 +128,7 @@ export default {
         }
       },
       series: [{
-        data: [90, 60, 100],
+        data: [60, 90, 100],
         type: 'bar',
         itemStyle: {
           normal: {
@@ -146,6 +149,72 @@ export default {
         }
       }]
     });
+
+    this.coverage_diff_by_year_chart = this.$echarts.init(document.getElementById('coverageDiffByYear'));
+    this.coverage_diff_by_year_chart.setOption({
+     tooltip: {
+        trigger: 'item',
+        formatter:'{b}: {c}%'
+      },
+      xAxis: {
+          type: 'value',
+          position: 'top',
+          //max: 50,
+          //min: -50,
+          splitLine: {
+              lineStyle: {
+                  type: 'dashed'
+              }
+          }
+      },
+      yAxis: {
+          type: 'category',
+          axisLine: {
+            show: true,
+            onZero:true,
+            lineStyle:{
+                color:"#000000",
+            }
+          },
+          axisLabel: {show: false},
+          axisTick: {show: false},
+          splitLine: {show: false},
+          data: ['ByBlog', 'MobileSTF', 'RestAPI']
+      },
+      series: [
+          {
+              name: 'Coverage Diff',
+              type: 'bar',
+              stack: '总量',
+              label: {
+                  show: true,
+                  formatter: '{b}'
+              },
+              itemStyle: {
+                  normal: {
+                      // barBorderRadius: [0,4,4,0],
+                      color: function (data) {
+                          return data.value < 0 ? "#E82724" : "#00A212";
+                      },
+                      label: {
+                         show: true,
+                         position: 'inside',
+                         formatter: '{b}\n{c}%'
+                      }
+                  },
+
+              },
+              data: [
+                  -7,
+                  47,
+                  18
+              ]
+          }
+      ]
+    });
+
+    var myEvent = new Event('resize');
+    window.dispatchEvent(myEvent);
   }
 
 }
