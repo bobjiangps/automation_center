@@ -20,6 +20,16 @@
         </h2>
       </a-col>
     </a-row>
+    <a-row type="flex" justify="space-around" :style="{backgroundColor: '#FFF', margin: '20px'}">
+      <a-col :span="10">
+        <a-card title="Automation Coverage by Project" :style="{margin: '20px 0px'}" :headStyle="{color:'#1874CD', fontWeight: 'bold'}">
+          <div id="coverageByProjects" :style="{width: '90%', height: '400px'}"></div>
+        </a-card>
+      </a-col>
+      <a-col :span="10">
+        <div id="coverageDiffByProjects" :style="{width: '300px', height: '300px', margin: '20px 0px'}"></div>
+      </a-col>
+    </a-row>
     <h3>{{ msg }}</h3>
     <button type="button" @click='getProjects' :style="{ margin: '10px', padding: '5px' }">get projects</button>
     <a-button type="primary">Button</a-button>
@@ -58,11 +68,12 @@ export default {
       msg: 'Projects in Automation Center',
       projects: [],
       auth: [],
-      auth_text: ''
+      auth_text: '',
+      coverage_by_projects_chart: ''
     }
   },
 
- created: function() {
+  created: function() {
     if (this.$store.state.token) {
       this.auth_text = "user already logged in ";
     }
@@ -90,8 +101,41 @@ export default {
         this.$router.push('/login')
       })
     }
+  },
 
+  mounted: function() {
+    this.coverage_by_projects_chart = this.$echarts.init(document.getElementById('coverageByProjects'));
+    this.coverage_by_projects_chart.setOption({
+      //title: {
+      //  text: 'Automation Coverage by Project',
+      //  left: 'center'
+      //},
+      xAxis: {
+        type: 'category',
+        data: ['ByBlog', 'MobileSTF', 'RestAPI']
+      },
+      yAxis: {
+        type: 'value'
+      },
+      series: [{
+        data: [90, 200, 150],
+        type: 'bar',
+        itemStyle: {
+          normal: {
+            color: function(params) {
+              var colorList = ['#708090', '#4682B4', '#008B8B', '#4B0082', '#4169E1', '#BDB76B', '#8B4513', '#800000'];
+              var index = params.dataIndex;
+              if (params.dataIndex >= colorList.length) {
+                index = params.dataIndex - colorList.length;
+              }
+              return colorList[index];
+            }
+          }
+        }
+      }]
+    });
   }
+
 }
 </script>
 
