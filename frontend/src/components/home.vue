@@ -158,6 +158,9 @@ export default {
       },
       xAxis: {
           type: 'value',
+          axisLabel: {
+            formatter: '{value} %'
+          },
           position: 'top',
           //max: 50,
           //min: -50,
