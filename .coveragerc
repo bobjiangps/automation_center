@@ -8,3 +8,4 @@ omit =
 [report]
 exclude_lines =
     return self.name
+    list_perms
