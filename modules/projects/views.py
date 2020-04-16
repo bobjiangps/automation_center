@@ -152,6 +152,7 @@ class ProjectDetail(generics.RetrieveUpdateAPIView):
 class ProjectAmount(APIView):
 
     permission_classes = [IsSpecifiedProjectOrReadOnly]
+    queryset = Project.objects.none()
 
     def get(self, request):
         """
@@ -164,6 +165,7 @@ class ProjectAmount(APIView):
 class ExampleParameterInUrl(APIView):
 
     permission_classes = [IsSpecifiedProjectOrReadOnly]
+    queryset = Project.objects.none()
 
     def get(self, request, project_id, user_id):
         """
@@ -177,6 +179,7 @@ class ExampleParameterInUrl(APIView):
 class ExampleParameterInRequest(APIView):
 
     permission_classes = [IsSpecifiedProjectOrReadOnly]
+    queryset = Project.objects.none()
 
     def get(self, request):
         """
