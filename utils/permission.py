@@ -6,6 +6,15 @@ from projects.models import Project
 SAFE_METHODS = ('GET', 'HEAD', 'OPTIONS')
 
 
+class ReadOnly(BasePermission):
+    """
+    Only allow read requests.
+    """
+
+    def has_permission(self, request, view):
+        return bool(request.method in SAFE_METHODS)
+
+
 class IsStaffUser(BasePermission):
     """
     Allows access only to staff or super users.
