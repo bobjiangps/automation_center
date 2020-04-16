@@ -1,6 +1,6 @@
-from django.contrib.auth.models import User, Group
+from django.contrib.auth.models import User, Group, Permission
 from rest_framework import viewsets
-from .serializers import UserSerializer, GroupSerializer
+from .serializers import UserSerializer, GroupSerializer, PermissionSerializer
 from utils.permission import IsSuperUserOrReadOnly
 from django.utils import timezone
 from rest_framework import status
@@ -52,6 +52,15 @@ class GroupViewSet(viewsets.ModelViewSet):
     permission_classes = [IsSuperUserOrReadOnly]
     queryset = Group.objects.all().order_by('id')
     serializer_class = GroupSerializer
+
+
+class PermissionViewSet(viewsets.ReadOnlyModelViewSet):
+    """
+        get:
+            Return all permissions.
+    """
+    queryset = Permission.objects.all().order_by('id')
+    serializer_class = PermissionSerializer
 
 
 class ObtainExpiringAuthToken(ObtainAuthToken):

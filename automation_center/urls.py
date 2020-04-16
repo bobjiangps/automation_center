@@ -25,6 +25,7 @@ from modules.users import views as u_views
 router = routers.DefaultRouter()
 router.register(r'users', u_views.UserViewSet)
 router.register(r'groups', u_views.GroupViewSet)
+router.register(r'permissions', u_views.PermissionViewSet)
 
 schema_view = get_schema_view(title='API DOC', renderer_classes=[SwaggerUIRenderer, OpenAPIRenderer])
 
