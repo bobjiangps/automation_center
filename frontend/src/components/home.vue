@@ -69,6 +69,7 @@ export default {
     return {
       msg: 'Projects in Automation Center',
       projects: [],
+      error_msg: '',
       auth: [],
       auth_text: '',
       coverage_by_projects_chart: '',
@@ -83,6 +84,19 @@ export default {
     else {
       this.auth_text = "no user logged in";
     }
+  },
+
+  mounted: function() {
+    this.$http.get(`${this.$http.defaults.baseURL}/projects/names/`)
+      .then(response => {
+        this.projects = response.data["names"];
+        this.draw_coverage_by_projects_chart();
+        this.draw_coverage_diff_by_year_chart();
+      })
+      .catch(err => {console.log(err)})
+
+    var myEvent = new Event('resize');
+    window.dispatchEvent(myEvent);
   },
 
   methods: {
@@ -103,121 +117,120 @@ export default {
       .then(() => {
         this.$router.push('/login')
       })
-    }
-  },
+    },
 
-  mounted: function() {
-    this.coverage_by_projects_chart = this.$echarts.init(document.getElementById('coverageByProjects'));
-    this.coverage_by_projects_chart.setOption({
-      //title: {
-      //  text: 'Automation Coverage by Project',
-      //  left: 'center'
-      //},
-      tooltip: {
-        trigger: 'item',
-        formatter:'{b}: {c}%'
-      },
-      xAxis: {
-        type: 'category',
-        data: ['ByBlog', 'MobileSTF', 'RestAPI']
-      },
-      yAxis: {
-        type: 'value',
-        axisLabel: {
-          formatter: '{value} %'
-        }
-      },
-      series: [{
-        data: [60, 90, 100],
-        type: 'bar',
-        itemStyle: {
-          normal: {
-            color: function(params) {
-              var colorList = ['#708090', '#4682B4', '#008B8B', '#4B0082', '#4169E1', '#BDB76B', '#8B4513', '#800000'];
-              var index = params.dataIndex;
-              if (params.dataIndex >= colorList.length) {
-                index = params.dataIndex - colorList.length;
-              }
-              return colorList[index];
-            },
-            label: {
-               show: true,
-               position: 'top',
-               formatter: '{c}%'
-            }
-          }
-        }
-      }]
-    });
-
-    this.coverage_diff_by_year_chart = this.$echarts.init(document.getElementById('coverageDiffByYear'));
-    this.coverage_diff_by_year_chart.setOption({
-     tooltip: {
-        trigger: 'item',
-        formatter:'{b}: {c}%'
-      },
-      xAxis: {
+    draw_coverage_by_projects_chart: function() {
+      this.coverage_by_projects_chart = this.$echarts.init(document.getElementById('coverageByProjects'));
+      this.coverage_by_projects_chart.setOption({
+        //title: {
+        //  text: 'Automation Coverage by Project',
+        //  left: 'center'
+        //},
+        tooltip: {
+          trigger: 'item',
+          formatter:'{b}: {c}%'
+        },
+        xAxis: {
+          type: 'category',
+          data: this.projects
+        },
+        yAxis: {
           type: 'value',
           axisLabel: {
             formatter: '{value} %'
-          },
-          position: 'top',
-          //max: 50,
-          //min: -50,
-          splitLine: {
-              lineStyle: {
-                  type: 'dashed'
-              }
           }
-      },
-      yAxis: {
-          type: 'category',
-          axisLine: {
-            show: true,
-            onZero:true,
-            lineStyle:{
-                color:"#000000",
-            }
-          },
-          axisLabel: {show: false},
-          axisTick: {show: false},
-          splitLine: {show: false},
-          data: ['ByBlog', 'MobileSTF', 'RestAPI']
-      },
-      series: [
-          {
-              name: 'Coverage Diff',
-              type: 'bar',
-              stack: '总量',
+        },
+        series: [{
+          data: [60, 90, 100],
+          type: 'bar',
+          itemStyle: {
+            normal: {
+              color: function(params) {
+                var colorList = ['#708090', '#4682B4', '#008B8B', '#4B0082', '#4169E1', '#BDB76B', '#8B4513', '#800000'];
+                var index = params.dataIndex;
+                if (params.dataIndex >= colorList.length) {
+                  index = params.dataIndex - colorList.length;
+                }
+                return colorList[index];
+              },
               label: {
-                  show: true,
-                  formatter: '{b}'
-              },
-              itemStyle: {
-                  normal: {
-                      // barBorderRadius: [0,4,4,0],
-                      color: function (data) {
-                          return data.value < 0 ? "#E82724" : "#00A212";
-                      },
-                      label: {
-                         show: true,
-                         position: 'inside',
-                         formatter: '{b}\n{c}%'
-                      }
-                  },
-
-              },
-              data: [
-                  -7,
-                  47,
-                  18
-              ]
+                 show: true,
+                 position: 'top',
+                 formatter: '{c}%'
+              }
+            }
           }
-      ]
-    });
+        }]
+      });
+    },
 
-    var myEvent = new Event('resize');
-    window.dispatchEvent(myEvent);
+    draw_coverage_diff_by_year_chart: function() {
+      this.coverage_diff_by_year_chart = this.$echarts.init(document.getElementById('coverageDiffByYear'));
+      this.coverage_diff_by_year_chart.setOption({
+       tooltip: {
+          trigger: 'item',
+          formatter:'{b}: {c}%'
+        },
+        xAxis: {
+            type: 'value',
+            axisLabel: {
+              formatter: '{value} %'
+            },
+            position: 'top',
+            //max: 50,
+            //min: -50,
+            splitLine: {
+                lineStyle: {
+                    type: 'dashed'
+                }
+            }
+        },
+        yAxis: {
+            type: 'category',
+            axisLine: {
+              show: true,
+              onZero:true,
+              lineStyle:{
+                  color:"#000000",
+              }
+            },
+            axisLabel: {show: false},
+            axisTick: {show: false},
+            splitLine: {show: false},
+            data: this.projects
+        },
+        series: [
+            {
+                name: 'Coverage Diff',
+                type: 'bar',
+                stack: '总量',
+                label: {
+                    show: true,
+                    formatter: '{b}'
+                },
+                itemStyle: {
+                    normal: {
+                        // barBorderRadius: [0,4,4,0],
+                        color: function (data) {
+                            return data.value < 0 ? "#E82724" : "#00A212";
+                        },
+                        label: {
+                           show: true,
+                           position: 'inside',
+                           formatter: '{b}\n{c}%'
+                        }
+                    },
+
+                },
+                data: [
+                    -7,
+                    47,
+                    18
+                ]
+            }
+        ]
+      });
+    }
   }
 
 }

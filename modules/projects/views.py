@@ -162,6 +162,20 @@ class ProjectAmount(APIView):
         return Response(count)
 
 
+class ProjectNames(APIView):
+
+    queryset = Project.objects.none()
+
+    def get(self, request):
+        """
+        Return amount of current projects.
+        """
+        names = {"names": []}
+        for p in Project.objects.all():
+            names["names"].append(p.name)
+        return Response(names)
+
+
 class ExampleParameterInUrl(APIView):
 
     permission_classes = [IsSpecifiedProjectOrReadOnly]
