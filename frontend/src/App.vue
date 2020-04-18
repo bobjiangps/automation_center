@@ -13,9 +13,7 @@
         <a-menu mode="inline" :openKeys="openKeys" @openChange="onOpenChange" style="background: #2F4F4F; color: #fff;">
           <a-sub-menu key="sub1">
             <span slot="title"><a-icon type="project" /><span>Projects</span></span>
-            <a-menu-item key="1">ByBlog</a-menu-item>
-            <a-menu-item key="2">MobileSTF</a-menu-item>
-            <a-menu-item key="3">RestAPI</a-menu-item>
+            <a-menu-item v-for="(p, index) in this.projects" :key="index">{{p}}</a-menu-item>
           </a-sub-menu>
           <a-sub-menu key="sub2">
             <span slot="title"><a-icon type="setting" /><span>Settings</span></span>
@@ -66,6 +64,7 @@ export default {
     return {
       rootSubmenuKeys: ['sub1', 'sub2'],
       openKeys: ['sub1'],
+      projects: [],
       notifications: 3,
       copyRightPrefix: "Copyright © ",
       copyRightSuffix: " BobJiang | byincd.com"
@@ -92,6 +91,12 @@ export default {
         }
       return Promise.reject(error.response.data)   // 返回接口返回的错误信息
     });
+
+    this.$http.get(`${this.$http.defaults.baseURL}/projects/names/`)
+      .then(response => {
+        this.projects = response.data["names"];
+      })
+      .catch(err => {console.log(err)})
   },
 
   methods: {
