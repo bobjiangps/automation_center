@@ -1,4 +1,4 @@
-from .models import Project
+from .models import Project, Script, ScriptFunction, AutomatedCase
 from .serializers import ProjectSerializer
 from rest_framework import viewsets
 
@@ -151,7 +151,6 @@ class ProjectDetail(generics.RetrieveUpdateAPIView):
 
 class ProjectAmount(APIView):
 
-    permission_classes = [IsSpecifiedProjectOrReadOnly]
     queryset = Project.objects.none()
 
     def get(self, request):
@@ -168,12 +167,24 @@ class ProjectNames(APIView):
 
     def get(self, request):
         """
-        Return amount of current projects.
+        Return names of current projects.
         """
         names = {"names": []}
         for p in Project.objects.all():
             names["names"].append(p.name)
         return Response(names)
+
+
+class AutomatedCaseAmount(APIView):
+
+    queryset = AutomatedCase.objects.none()
+
+    def get(self, request):
+        """
+        Return amount of automated cases of all projects.
+        """
+        count = {"count": AutomatedCase.objects.count()}
+        return Response(count)
 
 
 class ExampleParameterInUrl(APIView):
