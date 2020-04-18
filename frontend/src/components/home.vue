@@ -3,19 +3,19 @@
     <a-row type="flex" justify="space-around">
       <a-col :span="7" :style="{ padding: '10px', backgroundColor: '#FFF', textAlign: 'left', border: 'solid', borderColor: '#FFF #FFF #FFF #1874CD' }">
         <h2 :style="{ color: '#1874CD', padding: '5px 0px 0px 0px', fontWeight: 'bold' }">Projects Total:
-          <span id="projects-total-count">3</span>
+          <span id="projects-total-count">{{this.projects.length}}</span>
           <font-awesome-icon :icon="[ 'fas', 'project-diagram' ]" :style="{ float: 'right', padding: '5px 0px 0px 0px' }" />
         </h2>
       </a-col>
       <a-col :span="7" :style="{ padding: '10px', backgroundColor: '#FFF', textAlign: 'left', border: 'solid', borderColor: '#FFF #FFF #FFF #6CA6CD' }">
         <h2 :style="{ color: '#6CA6CD', padding: '5px 0px 0px 0px', fontWeight: 'bold' }">Projects Running:
-          <span id="projects-running-count">1</span>
+          <span id="projects-running-count">{{this.running_projects_amount}}</span>
           <font-awesome-icon :icon="[ 'fas', 'running' ]" :style="{ float: 'right', padding: '5px 0px 0px 0px' }" />
         </h2>
       </a-col>
       <a-col :span="7" :style="{ padding: '10px', backgroundColor: '#FFF', textAlign: 'left', border: 'solid', borderColor: '#FFF #FFF #FFF #1CC88A' }">
         <h2 :style="{ color: '#1CC88A', padding: '5px 0px 0px 0px', fontWeight: 'bold' }">Automated Cases:
-          <span id="automated-cases-count">128</span>
+          <span id="automated-cases-count">{{this.automated_cases}}</span>
           <font-awesome-icon :icon="[ 'fas', 'clipboard-check' ]" :style="{ float: 'right', padding: '5px 0px 0px 0px' }" />
         </h2>
       </a-col>
@@ -69,6 +69,8 @@ export default {
     return {
       msg: 'Projects in Automation Center',
       projects: [],
+      running_projects_amount: 0,
+      automated_cases: 0,
       error_msg: '',
       auth: [],
       auth_text: '',
@@ -84,6 +86,12 @@ export default {
     else {
       this.auth_text = "no user logged in";
     }
+
+    this.$http.get(`${this.$http.defaults.baseURL}/projects/automated_case_amount/`)
+      .then(response => {
+        this.automated_cases = response.data["count"];
+      })
+      .catch(err => {console.log(err)})
   },
 
   mounted: function() {
