@@ -17,3 +17,33 @@ class Project(models.Model):
 
     def __str__(self):
         return self.name
+
+
+class Script(models.Model):
+
+    name = models.CharField(max_length=100)
+    project = models.ForeignKey(Project, on_delete=models.CASCADE)
+    create_time = models.DateTimeField(default=timezone.now)
+    update_time = models.DateTimeField(default=timezone.now)
+
+
+class ScriptFunction(models.Model):
+
+    name = models.CharField(max_length=100)
+    script = models.ForeignKey(Script, on_delete=models.CASCADE)
+    create_time = models.DateTimeField(default=timezone.now)
+    update_time = models.DateTimeField(default=timezone.now)
+
+    class Meta:
+        db_table = "projects_script_function"
+
+
+class AutomatedCase(models.Model):
+
+    name = models.CharField(max_length=100)
+    script_function = models.ForeignKey(ScriptFunction, on_delete=models.CASCADE)
+    create_time = models.DateTimeField(default=timezone.now)
+    update_time = models.DateTimeField(default=timezone.now)
+
+    class Meta:
+        db_table = "projects_automated_case"
