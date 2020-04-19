@@ -1,6 +1,6 @@
 <template>
   <div id="app">
-    <a-layout>
+    <a-layout style="height: 100%;">
       <a-layout-sider breakpoint="lg" collapsedWidth="0" @collapse="onCollapse" @breakpoint="onBreakpoint" style="background: #2F4F4F;">
         <div class="logo">
           <router-link to="/">
@@ -48,7 +48,7 @@
           </div>
         </a-layout-header>
         <router-view/>
-        <a-layout-footer style="text-align: center">
+        <a-layout-footer style="text-align: center;">
           {{ fullCopyRight }}
         </a-layout-footer>
       </a-layout>
@@ -144,6 +144,7 @@ export default {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-align: center;
+  height: 100%;
 }
 
 .logo {
