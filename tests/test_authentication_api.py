@@ -61,14 +61,14 @@ class AuthenticationTest(APITestCase):
 
     def test_token_expiration_rule(self):
         self.client.post("/automation/api/login/", self.user_data, format="json")
-        user_token_before = Token.objects.last()
+        user_token_before = Token.objects.filter(user_id=self.user.id)[0]
         self.client.post("/automation/api/login/", self.user_data, format="json")
-        user_token_after = Token.objects.last()
+        user_token_after = Token.objects.filter(user_id=self.user.id)[0]
         self.assertTrue(user_token_before.key, user_token_after.key)
         now = datetime.datetime.now()
         user_token_after.created = now - datetime.timedelta(hours=24)
         user_token_after.save()
         time.sleep(1)
         self.client.post("/automation/api/login/", self.user_data, format="json")
-        user_token_after_updated = Token.objects.last()
+        user_token_after_updated = Token.objects.filter(user_id=self.user.id)[0]
         self.assertTrue(user_token_after.key != user_token_after_updated.key)
