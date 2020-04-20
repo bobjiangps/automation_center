@@ -3,6 +3,7 @@ from rest_framework import viewsets
 from .serializers import UserSerializer, GroupSerializer, PermissionSerializer
 from utils.permission import IsSuperUserOrReadOnly
 from django.utils import timezone
+from django.apps import apps
 from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.authtoken.models import Token
@@ -99,16 +100,24 @@ class ObtainExpiringAuthToken(ObtainAuthToken):
 
     @staticmethod
     def list_perms(user):
+        exclude_list = ["token", "contenttype", "session", "logentry", "permission"]
         user_perms_dict = {}
         user_perms_list = []
-        exclude_list = ["token", "contenttype", "session", "logentry", "permission"]
+        for am in apps.get_models():
+            name = am.__name__.lower()
+            if name not in exclude_list:
+                user_perms_dict[name] = ["view"]
+                user_perms_list.append(name)
         default_all_perms = user.get_all_permissions()
         for perm in default_all_perms:
             new_perm = perm.split(".")[-1]
             action, module = new_perm.split("_")
+            if action == "delete" and module == "project":
+                continue
             if module not in exclude_list:
                 if module in user_perms_list:
-                    user_perms_dict[module].append(action)
+                    if action not in user_perms_dict[module]:
+                        user_perms_dict[module].append(action)
                 else:
                     user_perms_dict[module] = [action]
                     user_perms_list.append(module)
