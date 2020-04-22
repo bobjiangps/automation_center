@@ -3,19 +3,22 @@
     <a-row type="flex" justify="space-around">
       <a-col :span="7" :style="{ padding: '10px', backgroundColor: '#FFF', textAlign: 'left', border: 'solid', borderColor: '#FFF #FFF #FFF #1874CD' }">
         <h2 :style="{ color: '#1874CD', padding: '5px 0px 0px 0px', fontWeight: 'bold' }">Projects Total:
-          <span id="projects-total-count">{{this.projects.length}}</span>
+          <!--<span id="projects-total-count">{{this.summary.projects_total}}</span>-->
+          <number :from=animate_number.from :to=summary.projects_total :duration=animate_number.duration :delay=animate_number.delay />
           <font-awesome-icon :icon="[ 'fas', 'project-diagram' ]" :style="{ float: 'right', padding: '5px 0px 0px 0px' }" />
         </h2>
       </a-col>
       <a-col :span="7" :style="{ padding: '10px', backgroundColor: '#FFF', textAlign: 'left', border: 'solid', borderColor: '#FFF #FFF #FFF #6CA6CD' }">
         <h2 :style="{ color: '#6CA6CD', padding: '5px 0px 0px 0px', fontWeight: 'bold' }">Projects Running:
-          <span id="projects-running-count">{{this.running_projects_amount}}</span>
+          <!--<span id="projects-running-count">{{this.summary.projects_running}}</span>-->
+          <number :from=animate_number.from :to=summary.projects_running :duration=animate_number.duration :delay=animate_number.delay />
           <font-awesome-icon :icon="[ 'fas', 'running' ]" :style="{ float: 'right', padding: '5px 0px 0px 0px' }" />
         </h2>
       </a-col>
       <a-col :span="7" :style="{ padding: '10px', backgroundColor: '#FFF', textAlign: 'left', border: 'solid', borderColor: '#FFF #FFF #FFF #1CC88A' }">
         <h2 :style="{ color: '#1CC88A', padding: '5px 0px 0px 0px', fontWeight: 'bold' }">Automated Cases:
-          <span id="automated-cases-count">{{this.automated_cases}}</span>
+          <!--<span id="automated-cases-count">{{this.summary.automated_cases}}</span>-->
+          <number :from=animate_number.from :to=summary.automated_cases :duration=animate_number.duration :delay=animate_number.delay />
           <font-awesome-icon :icon="[ 'fas', 'clipboard-check' ]" :style="{ float: 'right', padding: '5px 0px 0px 0px' }" />
         </h2>
       </a-col>
@@ -69,13 +72,22 @@ export default {
     return {
       msg: 'Projects in Automation Center',
       projects: [],
-      running_projects_amount: 0,
-      automated_cases: 0,
       error_msg: '',
       auth: [],
       auth_text: '',
       coverage_by_projects_chart: '',
-      coverage_diff_by_year_chart: ''
+      coverage_diff_by_year_chart: '',
+      summary: {
+        projects_total: 0,
+        projects_running: 0,
+        automated_cases: 0,
+      },
+      animate_number: {
+        from: 0,
+        to: 0,
+        duration: 1,
+        delay: 0.2
+      }
     }
   },
 
@@ -89,7 +101,7 @@ export default {
 
     this.$http.get(`${this.$http.defaults.baseURL}/projects/automated_case_amount/`)
       .then(response => {
-        this.automated_cases = response.data["count"];
+        this.summary.automated_cases = response.data["count"];
       })
       .catch(err => {console.log(err)})
   },
@@ -98,6 +110,7 @@ export default {
     this.$http.get(`${this.$http.defaults.baseURL}/projects/names/`)
       .then(response => {
         this.projects = response.data["names"];
+        this.summary.projects_total = this.projects.length;
         this.draw_coverage_by_projects_chart();
         this.draw_coverage_diff_by_year_chart();
       })
@@ -238,7 +251,12 @@ export default {
             }
         ]
       });
-    }
+    },
+
+    commaFormat(number) {
+      //return number.toFixed(2);
+      return (number || 0).toString().replace(/(\d)(?=(?:\d{3})+$)/g, "$1,");
+    },
   }
 
 }

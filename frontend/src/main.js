@@ -7,6 +7,7 @@ import store from './utils/store'
 import axios from './utils/axios'
 import Antd from 'ant-design-vue'
 import 'ant-design-vue/dist/antd.less'
+import VueNumber from "vue-number-animation";
 import echarts from 'echarts'
 import { library } from '@fortawesome/fontawesome-svg-core'
 //import { faAutoprefixer } from '@fortawesome/free-brands-svg-icons'
@@ -21,6 +22,7 @@ Vue.component('font-awesome-layers', FontAwesomeLayers)
 Vue.component('font-awesome-layers-text', FontAwesomeLayersText)
 
 Vue.use(Antd)
+Vue.use(VueNumber);
 
 Vue.prototype.$http = axios;
 Vue.prototype.$echarts = echarts
