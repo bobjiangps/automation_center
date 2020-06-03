@@ -13,7 +13,9 @@
         <a-menu mode="inline" :openKeys="openKeys" @openChange="onOpenChange" style="background: #2F4F4F; color: #fff;">
           <a-sub-menu key="sub1">
             <span slot="title"><a-icon type="project" /><span>Projects</span></span>
-            <a-menu-item v-for="(p, index) in this.projects" :key="index">{{p}}</a-menu-item>
+            <a-menu-item v-for="(p, index) in this.projects" :key="index">
+              <a :href="projectHref(p.id)">{{p["name"]}}</a>
+            </a-menu-item>
           </a-sub-menu>
           <a-sub-menu key="sub2">
             <span slot="title"><a-icon type="setting" /><span>Settings</span></span>
@@ -92,9 +94,9 @@ export default {
       return Promise.reject(error.response.data)   // 返回接口返回的错误信息
     });
 
-    this.$http.get(`${this.$http.defaults.baseURL}/projects/names/`)
+    this.$http.get(`${this.$http.defaults.baseURL}/projects/`)
       .then(response => {
-        this.projects = response.data["names"];
+        this.projects = response.data["results"];
       })
       .catch(err => {console.log(err)})
   },
@@ -126,6 +128,10 @@ export default {
       .then(() => {
         this.$router.push('/login')
       })
+    },
+
+    projectHref(project_id) {
+      return "/projects/" + project_id;
     }
   },
 
