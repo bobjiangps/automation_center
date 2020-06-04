@@ -2,6 +2,7 @@ import Vue from 'vue'
 import Router from 'vue-router'
 import Home from '@/components/home'
 import Login from '@/components/login'
+import Project from '@/components/project'
 import store from '../utils/store'
 
 Vue.use(Router)
@@ -37,7 +38,12 @@ export default new Router({
       beforeEnter: ifNotAuthenticated,
     },
     {
-      path: '/home',
+      path: '/projects/:id',
+      name: 'projects',
+      component: Project
+    },
+    {
+      path: '/test',
       name: 'test',
       component: Home,
       beforeEnter: ifAuthenticated,
