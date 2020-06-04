@@ -11,10 +11,16 @@
         </div>
         <hr style="width: 90%;">
         <a-menu mode="inline" :openKeys="openKeys" @openChange="onOpenChange" style="background: #2F4F4F; color: #fff;">
-          <a-sub-menu key="sub1">
+          <a-sub-menu v-if="this.in_home_page" key="sub1">
             <span slot="title"><a-icon type="project" /><span>Projects</span></span>
             <a-menu-item v-for="(p, index) in this.projects" :key="index">
               <a :href="projectHref(p.id)">{{p["name"]}}</a>
+            </a-menu-item>
+          </a-sub-menu>
+          <a-sub-menu v-else key="sub1">
+            <span slot="title"><a-icon type="project" /><span>Projects</span></span>
+            <a-menu-item v-for="(p, index) in this.project_side_items" :key="index">
+              {{p}}
             </a-menu-item>
           </a-sub-menu>
           <a-sub-menu key="sub2">
@@ -69,11 +75,26 @@ export default {
       projects: [],
       notifications: 3,
       copyRightPrefix: "Copyright © ",
-      copyRightSuffix: " BobJiang | byincd.com"
+      copyRightSuffix: " BobJiang | byincd.com",
+      in_home_page: true,
+      project_sider_items: ['Dashboard', 'Rounds', 'Suites', 'Scripts', 'Reports']
     };
   },
 
   created: function() {
+    if (this.$route.path.indexOf("/projects/") >= 0) {
+      this.in_home_page = false;
+    }
+    else {
+      this.in_home_page = true;
+      this.$http.get(`${this.$http.defaults.baseURL}/projects/`)
+        .then(response => {
+          this.projects = response.data["results"];
+        })
+        .catch(err => {console.log(err)})
+    }
+    console.log("tt: "+this.in_home_page);
+
     this.$http.interceptors.response.use(
       response => {
         return response;
@@ -94,11 +115,6 @@ export default {
       return Promise.reject(error.response.data)   // 返回接口返回的错误信息
     });
 
-    this.$http.get(`${this.$http.defaults.baseURL}/projects/`)
-      .then(response => {
-        this.projects = response.data["results"];
-      })
-      .catch(err => {console.log(err)})
   },
 
   methods: {
