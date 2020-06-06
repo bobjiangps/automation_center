@@ -10,6 +10,13 @@ class UserSerializer(serializers.ModelSerializer):
         fields = ["id", "username", "email", "is_active", "is_staff", "is_superuser", "groups", "last_login", "user_permissions"]
 
 
+class OwnerSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = User
+        fields = ["id", "username", "email"]
+
+
 class GroupSerializer(serializers.ModelSerializer):
 
     class Meta:

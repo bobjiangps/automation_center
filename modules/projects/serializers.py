@@ -1,5 +1,6 @@
 from .models import Project
 from rest_framework import serializers
+from users.serializers import OwnerSerializer
 
 
 # class ProjectSerializer(serializers.Serializer):
@@ -25,7 +26,10 @@ from rest_framework import serializers
 #         return instance
 
 class ProjectSerializer(serializers.ModelSerializer):
+    owner = OwnerSerializer(read_only=True, many=True)
 
     class Meta:
         model = Project
-        fields = "__all__"
+        # fields = "__all__"
+        fields = ("id", "name", "project_type", "create_time", "update_time", "owner")
+
