@@ -1,6 +1,6 @@
 from .models import Project
 from rest_framework import serializers
-from users.serializers import OwnerSerializer
+# from users.serializers import OwnerSerializer
 
 
 # class ProjectSerializer(serializers.Serializer):
@@ -26,10 +26,20 @@ from users.serializers import OwnerSerializer
 #         return instance
 
 class ProjectSerializer(serializers.ModelSerializer):
-    owner = OwnerSerializer(read_only=True, many=True)
+    # owner = OwnerSerializer(read_only=True, many=True)
+    owner_info = serializers.SerializerMethodField()
+
+    def get_owner_info(self, instance):
+        user_obj = instance.owner.get_queryset()
+        owner_list = []
+        if user_obj:
+            for u in user_obj:
+                owner_list.append({"id": u.id,
+                                   "username": u.username,
+                                   "email": u.email})
+        return owner_list
 
     class Meta:
         model = Project
-        # fields = "__all__"
-        fields = ("id", "name", "project_type", "create_time", "update_time", "owner")
-
+        fields = "__all__"
+        # fields = ("id", "name", "project_type", "create_time", "update_time", "owner")
