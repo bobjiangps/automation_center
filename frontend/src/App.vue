@@ -3,11 +3,11 @@
     <a-layout style="height: 100%;">
       <a-layout-sider breakpoint="lg" collapsedWidth="0" @collapse="onCollapse" @breakpoint="onBreakpoint" style="background: #2F4F4F;">
         <div class="logo">
-          <router-link to="/">
+          <a href="/">
             <font-awesome-icon icon="chart-area" size="3x" inverse />
             <!--<font-awesome-icon :icon="['fab', 'autoprefixer']" size="3x" inverse />-->
             <h3 style="color: #fff; margin: 10px;">Automation Center</h3>
-          </router-link>
+          </a>
         </div>
         <hr style="width: 90%;">
         <a-menu mode="inline" :openKeys="openKeys" @openChange="onOpenChange" style="background: #2F4F4F; color: #fff;">
@@ -19,8 +19,8 @@
           </a-sub-menu>
           <a-sub-menu v-else key="sub1">
             <span slot="title"><a-icon type="project" /><span>Projects</span></span>
-            <a-menu-item v-for="(p, index) in this.project_side_items" :key="index">
-              {{p}}
+            <a-menu-item v-for="(p, index) in this.project_sider_items" :key="index">
+              <router-link :to="p.link">{{p["name"]}}</router-link>
             </a-menu-item>
           </a-sub-menu>
           <a-sub-menu key="sub2">
@@ -77,7 +77,13 @@ export default {
       copyRightPrefix: "Copyright © ",
       copyRightSuffix: " BobJiang | byincd.com",
       in_home_page: true,
-      project_sider_items: ['Dashboard', 'Rounds', 'Suites', 'Scripts', 'Reports']
+      project_sider_items: [
+        { "name": "Dashboard", "link": "" },
+        { "name": "Rounds", "link": "test-rounds" },
+        { "name": "Suites", "link": "test-suites" },
+        { "name": "Scripts", "link": "test-scripts" },
+        { "name": "Reports", "link": "test-reports" }
+      ]
     };
   },
 
@@ -93,7 +99,6 @@ export default {
         })
         .catch(err => {console.log(err)})
     }
-    console.log("tt: "+this.in_home_page);
 
     this.$http.interceptors.response.use(
       response => {
@@ -147,7 +152,7 @@ export default {
     },
 
     projectHref(project_id) {
-      return "/projects/" + project_id;
+      return "/projects/" + project_id + "/";
     }
   },
 
