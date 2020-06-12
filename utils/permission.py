@@ -1,6 +1,6 @@
 from rest_framework.permissions import BasePermission
 from rest_framework.permissions import DjangoModelPermissions
-from projects.models import Project
+from modules.projects.models import Project
 
 
 SAFE_METHODS = ('GET', 'HEAD', 'OPTIONS')

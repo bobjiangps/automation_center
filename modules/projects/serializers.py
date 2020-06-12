@@ -1,6 +1,6 @@
 from .models import Project
 from rest_framework import serializers
-from users.serializers import OwnerSerializer
+from modules.users.serializers import OwnerSerializer
 
 
 # class ProjectSerializer(serializers.Serializer):
