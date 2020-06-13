@@ -23,6 +23,10 @@ const ifAuthenticated = (to, from, next) => {
   next('/login')
 }
 
+const projectToDashboard = (to, from, next) => {
+  next(to.fullPath + 'dashboard')
+}
+
 export default new Router({
   mode: 'history',
   routes: [
@@ -40,7 +44,8 @@ export default new Router({
     {
       path: '/projects/:id',
       name: 'projects',
-      component: Project
+      component: Project,
+      beforeEnter: projectToDashboard,
     },
     {
       path: '/test',

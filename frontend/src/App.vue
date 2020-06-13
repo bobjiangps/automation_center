@@ -15,6 +15,7 @@
             <span slot="title"><a-icon type="project" /><span>Projects</span></span>
             <a-menu-item v-for="(p, index) in this.projects" :key="index">
               <a :href="projectHref(p.id)">{{p["name"]}}</a>
+              <!--<router-link :to="{ name: 'projects', params: { id: p.id }}">{{p["name"]}}</router-link>-->
             </a-menu-item>
           </a-sub-menu>
           <a-sub-menu v-else key="sub1">
@@ -78,7 +79,7 @@ export default {
       copyRightSuffix: " BobJiang | byincd.com",
       in_home_page: true,
       project_sider_items: [
-        { "name": "Dashboard", "link": "" },
+        { "name": "Dashboard", "link": "dashboard" },
         { "name": "Rounds", "link": "test-rounds" },
         { "name": "Suites", "link": "test-suites" },
         { "name": "Scripts", "link": "test-scripts" },
