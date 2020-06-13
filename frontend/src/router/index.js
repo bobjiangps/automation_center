@@ -3,6 +3,7 @@ import Router from 'vue-router'
 import Home from '@/components/home'
 import Login from '@/components/login'
 import Project from '@/components/project'
+import ProjectDashboard from '@/components/projects/dashboard'
 import store from '../utils/store'
 
 Vue.use(Router)
@@ -43,9 +44,14 @@ export default new Router({
     },
     {
       path: '/projects/:id',
-      name: 'projects',
+      name: 'project',
       component: Project,
       beforeEnter: projectToDashboard,
+    },
+    {
+      path: '/projects/:id/dashboard',
+      name: 'project_dashboard',
+      component: ProjectDashboard
     },
     {
       path: '/test',
