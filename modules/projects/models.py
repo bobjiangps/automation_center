@@ -9,7 +9,7 @@ class Project(models.Model):
         ("internal", "internal"),
         ("public", "public")
     )
-    name = models.CharField(max_length=100)
+    name = models.CharField(max_length=100, unique=True)
     project_type = models.CharField(choices=PROJECT_TYPES, default=PROJECT_TYPES[0][0], max_length=100)
     create_time = models.DateTimeField(default=timezone.now)
     update_time = models.DateTimeField(default=timezone.now)
@@ -59,3 +59,4 @@ class TestSuite(models.Model):
 
     class Meta:
         db_table = "projects_test_suite"
+        unique_together = ("name", "project")
