@@ -47,3 +47,15 @@ class AutomatedCase(models.Model):
 
     class Meta:
         db_table = "projects_automated_case"
+
+
+class TestSuite(models.Model):
+
+    name = models.CharField(max_length=100)
+    project = models.ForeignKey(Project, on_delete=models.CASCADE)
+    script = models.ManyToManyField(Script, blank=True)
+    create_time = models.DateTimeField(default=timezone.now)
+    update_time = models.DateTimeField(default=timezone.now)
+
+    class Meta:
+        db_table = "projects_test_suite"
