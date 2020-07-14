@@ -1,5 +1,6 @@
 import datetime
 from django.utils import timezone
+from django.conf import settings
 from rest_framework.authentication import TokenAuthentication
 from rest_framework import exceptions
 
@@ -19,7 +20,7 @@ class ExpiringTokenAuthentication(TokenAuthentication):
         # utc_now = datetime.datetime.utcnow().replace(tzinfo=timezone.utc)
         utc_now = datetime.datetime.utcnow()
 
-        if token.created < utc_now - datetime.timedelta(hours=12):
+        if token.created < utc_now - datetime.timedelta(hours=settings.EXPIRE_HOURS):
             raise exceptions.AuthenticationFailed('Token has expired')
 
         return token.user, token

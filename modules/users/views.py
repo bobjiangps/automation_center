@@ -4,6 +4,7 @@ from .serializers import UserSerializer, GroupSerializer, PermissionSerializer
 from utils.permission import IsSuperUserOrReadOnly
 from django.utils import timezone
 from django.apps import apps
+from django.conf import settings
 from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.authtoken.models import Token
@@ -79,7 +80,7 @@ class ObtainExpiringAuthToken(ObtainAuthToken):
             # utc_now = datetime.datetime.utcnow().replace(tzinfo=timezone.utc)
             now = datetime.datetime.now()
             if not created:
-                if token.created < now - datetime.timedelta(hours=12):
+                if token.created < now - datetime.timedelta(hours=settings.EXPIRE_HOURS):
                     print("re-generate token for old one is expired")
                     token.delete()
                     token = Token.objects.create(user=user)
