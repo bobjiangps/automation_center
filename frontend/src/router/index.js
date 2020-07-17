@@ -43,15 +43,11 @@ export default new Router({
       beforeEnter: ifNotAuthenticated,
     },
     {
-      path: '/projects/:id',
+      path: '/projects/:project_id',
       name: 'project',
-      component: Project,
-      beforeEnter: projectToDashboard,
-    },
-    {
-      path: '/projects/:id/dashboard',
-      name: 'project_dashboard',
-      component: ProjectDashboard
+      component: ProjectDashboard,
+      // component: Project,
+      // beforeEnter: projectToDashboard,
     },
     {
       path: '/test',
