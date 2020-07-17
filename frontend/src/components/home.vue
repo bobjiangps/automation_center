@@ -35,7 +35,7 @@
         </a-card>
       </a-col>
     </a-row>
-    <h3>{{ msg }}</h3>
+    <!--<h3>{{ msg }}</h3>
     <button type="button" @click='getProjects' :style="{ margin: '10px', padding: '5px' }">get projects</button>
     <a-button type="primary">Button</a-button>
     <a v-if="this.$store.state.token" @click="logout" :style="{ margin: '10px', padding: '5px' }">Logout</a>
@@ -61,7 +61,7 @@
         <td>{{ p.create_time }}</td>
         <td>{{ p.update_time }}</td>
       </tr>
-    </table>
+    </table>-->
   </div>
 </template>
 
@@ -101,7 +101,8 @@ export default {
 
     this.$http.get(`${this.$http.defaults.baseURL}/projects/automated_case_amount/`)
       .then(response => {
-        this.summary.automated_cases = response.data["count"];
+        // this.summary.automated_cases = response.data["count"]; // real data
+        this.summary.automated_cases = response.data["count"] * 100 + 69; // set the virtual data
       })
       .catch(err => {console.log(err)})
   },
