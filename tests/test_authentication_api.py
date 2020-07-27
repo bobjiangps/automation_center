@@ -44,11 +44,14 @@ class AuthenticationTest(APITestCase):
         self.assertEqual(user_response.status_code, status.HTTP_200_OK)
 
     def test_token_should_be_deleted_after_logout(self):
-        self.client.post("/automation/api/login/", self.user_data, format="json")
+        user_response = json.loads(self.client.post("/automation/api/login/", self.user_data, format="json").content)
         self.assertEqual(2, Token.objects.count())
-        logout_response = self.client.post("/automation/api/logout/", self.user_data, format="json")
+        token = user_response["token"]
+        self.client.credentials(HTTP_AUTHORIZATION="Token " + token)
+        logout_response = self.client.post("/automation/api/logout/")
         self.assertEqual(logout_response.status_code, status.HTTP_200_OK)
         self.assertEqual(1, Token.objects.count())
+        self.client.credentials(HTTP_AUTHORIZATION="")
 
     def test_login_failed(self):
         not_exist_user_data = {

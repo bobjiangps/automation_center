@@ -9,6 +9,9 @@ from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.authtoken.models import Token
 from rest_framework.authtoken.views import ObtainAuthToken
+from rest_framework.views import APIView
+from django.core.exceptions import ObjectDoesNotExist
+from rest_framework.permissions import IsAuthenticated
 import datetime
 
 
@@ -107,14 +110,20 @@ class ObtainExpiringAuthToken(ObtainAuthToken):
         for am in apps.get_models():
             name = am.__name__.lower()
             if name not in exclude_list:
-                user_perms_dict[name] = ["view"]
+                # user_perms_dict[name] = ["view"]
+                user_perms_dict[name] = []
                 user_perms_list.append(name)
         default_all_perms = user.get_all_permissions()
         for perm in default_all_perms:
             new_perm = perm.split(".")[-1]
             action, module = new_perm.split("_")
+            action_new_name = {"add": "create",
+                               "change": "update",
+                               "view": "read"}
             if action == "delete" and module == "project":
                 continue
+            if action in action_new_name.keys():
+                action = action_new_name[action]
             if module not in exclude_list:
                 if module in user_perms_list:
                     if action not in user_perms_dict[module]:
@@ -125,3 +134,15 @@ class ObtainExpiringAuthToken(ObtainAuthToken):
         for d in user_perms_dict.keys():
             user_perms_dict[d].sort()
         return user_perms_dict
+
+
+class RevokeAuthToken(APIView):
+    queryset = User.objects.none()
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request):
+        try:
+            request.user.auth_token.delete()
+        except (AttributeError, ObjectDoesNotExist):
+            pass
+        return Response({"result": "Successfully logged out."}, status=status.HTTP_200_OK)
