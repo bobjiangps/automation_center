@@ -19,12 +19,18 @@
             </a-menu-item>
           </a-sub-menu>
           <a-sub-menu v-else key="sub1">
-            <span slot="title"><a-icon type="project" /><span>Projects</span></span>
+            <span slot="title"><a-icon type="menu" /><span>Pages</span></span>
             <a-menu-item v-for="(p, index) in this.project_sider_items" :key="index">
               <router-link :to="projectSubHref(p.link)">{{p["name"]}}</router-link>
             </a-menu-item>
           </a-sub-menu>
-          <a-sub-menu key="sub2">
+          <a-sub-menu v-if="this.in_home_page == false" key="sub2">
+            <span slot="title"><a-icon type="project" /><span>Projects</span></span>
+            <a-menu-item v-for="(p, index) in this.projects" :key="index">
+              <a :href="projectHref(p.id)">{{p["name"]}}</a>
+            </a-menu-item>
+          </a-sub-menu>
+          <a-sub-menu key="sub3">
             <span slot="title"><a-icon type="setting" /><span>Settings</span></span>
             <a-menu-item key="1">Projects</a-menu-item>
             <a-menu-item key="2">Users</a-menu-item>
@@ -71,7 +77,7 @@ export default {
 
   data() {
     return {
-      rootSubmenuKeys: ['sub1', 'sub2'],
+      rootSubmenuKeys: ['sub1', 'sub2', 'sub3'],
       openKeys: ['sub1'],
       projects: [],
       notifications: 3,
@@ -91,14 +97,11 @@ export default {
   created: function() {
     if (this.$route.path.indexOf("/projects/") >= 0) {
       this.in_home_page = false;
+      this.retrieveProjects();
     }
     else {
       this.in_home_page = true;
-      this.$http.get(`${this.$http.defaults.baseURL}/projects/`)
-        .then(response => {
-          this.projects = response.data["results"];
-        })
-        .catch(err => {console.log(err)})
+      this.retrieveProjects();
     }
 
     this.$http.interceptors.response.use(
@@ -158,6 +161,14 @@ export default {
 
     projectSubHref(link) {
       return `/projects/${this.$route.params.project_id}/${link}`;
+    },
+
+    retrieveProjects: function() {
+      this.$http.get(`${this.$http.defaults.baseURL}/projects/`)
+        .then(response => {
+          this.projects = response.data["results"];
+        })
+        .catch(err => {console.log(err)})
     },
   },
 
