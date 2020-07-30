@@ -1,21 +1,21 @@
 <template>
   <div style="margin: 20px;">
     <a-row type="flex" justify="space-around">
-      <a-col :span="7" :style="{ padding: '10px', backgroundColor: '#FFF', textAlign: 'left', border: 'solid', borderColor: '#FFF #FFF #FFF #1874CD' }">
+      <a-col :span="7" :style="{ padding: '10px', backgroundColor: '#FFF', textAlign: 'left', border: 'solid', borderRadius: '5px', borderColor: '#FFF #FFF #FFF #1874CD' }">
         <h2 :style="{ color: '#1874CD', padding: '5px 0px 0px 0px', fontWeight: 'bold' }">Projects Total:
           <!--<span id="projects-total-count">{{this.summary.projects_total}}</span>-->
           <number :from=animate_number.from :to=summary.projects_total :duration=animate_number.duration :delay=animate_number.delay />
           <font-awesome-icon :icon="[ 'fas', 'project-diagram' ]" :style="{ float: 'right', padding: '5px 0px 0px 0px' }" />
         </h2>
       </a-col>
-      <a-col :span="7" :style="{ padding: '10px', backgroundColor: '#FFF', textAlign: 'left', border: 'solid', borderColor: '#FFF #FFF #FFF #6CA6CD' }">
+      <a-col :span="7" :style="{ padding: '10px', backgroundColor: '#FFF', textAlign: 'left', border: 'solid', borderRadius: '5px', borderColor: '#FFF #FFF #FFF #6CA6CD' }">
         <h2 :style="{ color: '#6CA6CD', padding: '5px 0px 0px 0px', fontWeight: 'bold' }">Projects Running:
           <!--<span id="projects-running-count">{{this.summary.projects_running}}</span>-->
           <number :from=animate_number.from :to=summary.projects_running :duration=animate_number.duration :delay=animate_number.delay />
           <font-awesome-icon :icon="[ 'fas', 'running' ]" :style="{ float: 'right', padding: '5px 0px 0px 0px' }" />
         </h2>
       </a-col>
-      <a-col :span="7" :style="{ padding: '10px', backgroundColor: '#FFF', textAlign: 'left', border: 'solid', borderColor: '#FFF #FFF #FFF #1CC88A' }">
+      <a-col :span="7" :style="{ padding: '10px', backgroundColor: '#FFF', textAlign: 'left', border: 'solid', borderRadius: '5px', borderColor: '#FFF #FFF #FFF #1CC88A' }">
         <h2 :style="{ color: '#1CC88A', padding: '5px 0px 0px 0px', fontWeight: 'bold' }">Automated Cases:
           <!--<span id="automated-cases-count">{{this.summary.automated_cases}}</span>-->
           <number :from=animate_number.from :to=summary.automated_cases :duration=animate_number.duration :delay=animate_number.delay />
@@ -168,7 +168,7 @@ export default {
           itemStyle: {
             normal: {
               color: function(params) {
-                var colorList = ['#708090', '#4682B4', '#008B8B', '#4B0082', '#4169E1', '#BDB76B', '#8B4513', '#800000'];
+                var colorList = ['#DAA520', '#4682B4', '#2E8B57', '#708090', '#4682B4', '#008B8B', '#4B0082', '#4169E1', '#BDB76B', '#8B4513', '#800000'];
                 var index = params.dataIndex;
                 if (params.dataIndex >= colorList.length) {
                   index = params.dataIndex - colorList.length;
