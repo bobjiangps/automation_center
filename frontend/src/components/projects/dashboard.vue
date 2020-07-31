@@ -1,38 +1,14 @@
 <template>
   <div style="margin: 20px;">
-    <h3>this page will be updated, in dashboard</h3>
-    <a-row type="flex" justify="space-around">
-      <a-col :span="7" :style="{ padding: '10px', backgroundColor: '#FFF', textAlign: 'left', border: 'solid', borderColor: '#FFF #FFF #FFF #1874CD' }">
-        <h2 :style="{ color: '#1874CD', padding: '5px 0px 0px 0px', fontWeight: 'bold' }">Projects Total:
-          <!--<span id="projects-total-count">{{this.summary.projects_total}}</span>-->
-          <number :from=animate_number.from :to=summary.projects_total :duration=animate_number.duration :delay=animate_number.delay />
-          <font-awesome-icon :icon="[ 'fas', 'project-diagram' ]" :style="{ float: 'right', padding: '5px 0px 0px 0px' }" />
-        </h2>
-      </a-col>
-      <a-col :span="7" :style="{ padding: '10px', backgroundColor: '#FFF', textAlign: 'left', border: 'solid', borderColor: '#FFF #FFF #FFF #6CA6CD' }">
-        <h2 :style="{ color: '#6CA6CD', padding: '5px 0px 0px 0px', fontWeight: 'bold' }">Projects Running:
-          <!--<span id="projects-running-count">{{this.summary.projects_running}}</span>-->
-          <number :from=animate_number.from :to=summary.projects_running :duration=animate_number.duration :delay=animate_number.delay />
-          <font-awesome-icon :icon="[ 'fas', 'running' ]" :style="{ float: 'right', padding: '5px 0px 0px 0px' }" />
-        </h2>
-      </a-col>
-      <a-col :span="7" :style="{ padding: '10px', backgroundColor: '#FFF', textAlign: 'left', border: 'solid', borderColor: '#FFF #FFF #FFF #1CC88A' }">
-        <h2 :style="{ color: '#1CC88A', padding: '5px 0px 0px 0px', fontWeight: 'bold' }">Automated Cases:
-          <!--<span id="automated-cases-count">{{this.summary.automated_cases}}</span>-->
-          <number :from=animate_number.from :to=summary.automated_cases :duration=animate_number.duration :delay=animate_number.delay />
-          <font-awesome-icon :icon="[ 'fas', 'clipboard-check' ]" :style="{ float: 'right', padding: '5px 0px 0px 0px' }" />
-        </h2>
-      </a-col>
-    </a-row>
     <a-row type="flex" justify="space-around" :style="{backgroundColor: '#FFF', margin: '20px'}">
       <a-col :span="11">
-        <a-card title="Automation Coverage by Project" :style="{margin: '20px 0px'}" :headStyle="{color:'#1874CD', fontWeight: 'bold'}">
-          <div id="coverageByProjects" :style="{width: '90%', height: '400px'}"></div>
+        <a-card title="Automation Coverage by Year" :style="{margin: '20px 0px'}" :headStyle="{color:'#1874CD', fontWeight: 'bold'}">
+          <div id="coverageByYear" :style="{width: '100%', height: '400px'}"></div>
         </a-card>
       </a-col>
       <a-col :span="11">
         <a-card title="Automation Coverage Diff to Last Year" :style="{margin: '20px 0px'}" :headStyle="{color:'#1874CD', fontWeight: 'bold'}">
-          <div id="coverageDiffByYear" :style="{width: '90%', height: '400px'}"></div>
+          <div id="coverageDiffByYear" :style="{width: '100%', height: '400px'}"></div>
         </a-card>
       </a-col>
     </a-row>
@@ -41,30 +17,20 @@
 
 <script>
 export default {
-  name: 'Home',
+  name: 'ProjectDashboard',
   data () {
     return {
       projects: [],
-      coverage_by_projects_chart: '',
+      coverage_by_year_chart: '',
       coverage_diff_by_year_chart: '',
-      summary: {
-        projects_total: 0,
-        projects_running: 0,
-        automated_cases: 0,
-      },
-      animate_number: {
-        from: 0,
-        to: 0,
-        duration: 1,
-        delay: 0.2
-      }
+      temp: ''
     }
   },
 
   created: function() {
     this.$http.get(`${this.$http.defaults.baseURL}/projects/automated_case_amount/`)
       .then(response => {
-        this.summary.automated_cases = response.data["count"];
+        this.temp = response.data["count"];
       })
       .catch(err => {console.log(err)})
   },
@@ -73,8 +39,7 @@ export default {
     this.$http.get(`${this.$http.defaults.baseURL}/projects/names/`)
       .then(response => {
         this.projects = response.data["names"];
-        this.summary.projects_total = this.projects.length;
-        this.draw_coverage_by_projects_chart();
+        this.draw_coverage_by_year_chart();
         this.draw_coverage_diff_by_year_chart();
       })
       .catch(err => {console.log(err)})
@@ -91,48 +56,111 @@ export default {
       })
     },
 
-    draw_coverage_by_projects_chart: function() {
-      this.coverage_by_projects_chart = this.$echarts.init(document.getElementById('coverageByProjects'));
-      this.coverage_by_projects_chart.setOption({
-        //title: {
-        //  text: 'Automation Coverage by Project',
-        //  left: 'center'
-        //},
-        tooltip: {
-          trigger: 'item',
-          formatter:'{b}: {c}%'
-        },
-        xAxis: {
-          type: 'category',
-          data: this.projects
-        },
-        yAxis: {
-          type: 'value',
-          axisLabel: {
-            formatter: '{value} %'
-          }
-        },
-        series: [{
-          data: [60, 90, 100],
-          type: 'bar',
-          itemStyle: {
-            normal: {
-              color: function(params) {
-                var colorList = ['#708090', '#4682B4', '#008B8B', '#4B0082', '#4169E1', '#BDB76B', '#8B4513', '#800000'];
-                var index = params.dataIndex;
-                if (params.dataIndex >= colorList.length) {
-                  index = params.dataIndex - colorList.length;
-                }
-                return colorList[index];
+    draw_coverage_by_year_chart: function() {
+      this.coverage_by_year_chart = this.$echarts.init(document.getElementById('coverageByYear'));
+      this.coverage_by_year_chart.setOption({
+          tooltip : {
+              trigger: 'axis',
+              formatter: function (params) {
+                var html=params[0].name+"<br>";
+                  for(var i=0;i<params.length;i++){
+                     html+='<span style="display:inline-block;margin-right:5px;border-radius:10px;width:10px;height:10px;background-color:'+params[i].color+';"></span>'
+                      if(params[i].valueType=="percent"){
+                          html+=params[i].seriesName+": "+params[i].value+"%<br>";
+                      }else{
+                        html+=params[i].seriesName+": "+params[i].value+"<br>";
+                      }
+                  }
+                  return html;
               },
-              label: {
-                 show: true,
-                 position: 'top',
-                 formatter: '{c}%'
+              axisPointer: {
+                  type: 'cross',
+                  crossStyle: {
+                      color: '#999'
+                  }
               }
-            }
-          }
-        }]
+          },
+          //toolbox: {
+          //    feature: {
+          //        saveAsImage: {show: true}
+          //    }
+          //},
+          legend: {
+              data: ['Automated', 'Manual', 'Not Candidate', 'Automation Coverage'],
+              y: 'bottom'
+          },
+          xAxis: [
+              {
+                  type: 'category',
+                  data: ['2018', '2019', '2020'],
+                  axisPointer: {
+                      type: 'shadow'
+                  }
+              }
+          ],
+          yAxis: [
+              {
+                  type: 'value',
+                  name: 'Case Amount',
+                  min: 0,
+                  max: 1500,
+                  axisLabel: {
+                      formatter: '{value}'
+                  }
+              },
+              {
+                  type: 'value',
+                  name: 'Coverage',
+                  min: 0,
+                  max: 100,
+                  axisLabel: {
+                      formatter: '{value} %'
+                  }
+              }
+          ],
+          series: [
+              {
+                  name: 'Automated',
+                  type: 'bar',
+                  stack: '总量',
+                  color: '#8BBA72',
+                  label: {
+                      show: true,
+                      position: 'inside'
+                  },
+                  data: [670, 1020, 1080]
+              },
+              {
+                  name: 'Manual',
+                  type: 'bar',
+                  stack: '总量',
+                  color: '#E54D42',
+                  label: {
+                      show: true,
+                      position: 'inside'
+                  },
+                  data: [220, 120, 80]
+              },
+              {
+                  name: 'Not Candidate',
+                  type: 'bar',
+                  stack: '总量',
+                  color: '#DCDCDC',
+                  label: {
+                      show: true,
+                      position: 'inside'
+                  },
+                  data: [110, 60, 40]
+              },
+              {
+                  name: 'Automation Coverage',
+                  type: 'line',
+                  yAxisIndex: 1,
+                  color: '#3A99D8',
+                  data: [67, 85, 90],
+                  valueType: 'percent'
+              }
+          ]
       });
     },
 
