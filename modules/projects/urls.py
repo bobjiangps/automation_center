@@ -7,6 +7,7 @@ urlpatterns = [
     path(r'amount/', views.ProjectAmount.as_view(), name='project_amount'),
     path(r'names/', views.ProjectNames.as_view(), name='project_names'),
     path(r'automated_case_amount/', views.AutomatedCaseAmount.as_view(), name='project_automated_case_amount'),
+    path(r'mock_automation_coverage/', views.MockAutomationCoverageData.as_view(), name='mock_project_automation_coverage'),
     # path(r'in_url/project/<int:project_id>/user/<int:user_id>/', views.ExampleParameterInUrl.as_view(), name='example_parameter_in_url'),
     # path(r'in_request/', views.ExampleParameterInRequest.as_view(), name='example_parameter_in_request'),
 ]

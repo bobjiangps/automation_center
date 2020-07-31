@@ -36,132 +36,124 @@ export default {
   },
 
   mounted: function() {
-    this.$http.get(`${this.$http.defaults.baseURL}/projects/names/`)
-      .then(response => {
-        this.projects = response.data["names"];
-        this.draw_coverage_by_year_chart();
-        this.draw_coverage_diff_by_year_chart();
-      })
-      .catch(err => {console.log(err)})
+    this.draw_coverage_by_year_chart();
+    this.draw_coverage_diff_by_year_chart();
 
     var myEvent = new Event('resize');
     window.dispatchEvent(myEvent);
   },
 
   methods: {
-    logout: function () {
-      this.$store.dispatch('logout')
-      .then(() => {
-        this.$router.push('/login')
-      })
-    },
-
     draw_coverage_by_year_chart: function() {
-      this.coverage_by_year_chart = this.$echarts.init(document.getElementById('coverageByYear'));
-      this.coverage_by_year_chart.setOption({
-          tooltip : {
-              trigger: 'axis',
-              formatter: function (params) {
-                var html=params[0].name+"<br>";
-                  for(var i=0;i<params.length;i++){
-                     html+='<span style="display:inline-block;margin-right:5px;border-radius:10px;width:10px;height:10px;background-color:'+params[i].color+';"></span>'
-                      if(params[i].valueType=="percent"){
-                          html+=params[i].seriesName+": "+params[i].value+"%<br>";
-                      }else{
-                        html+=params[i].seriesName+": "+params[i].value+"<br>";
+      this.$http.get(`${this.$http.defaults.baseURL}/projects/mock_automation_coverage/`)
+        .then(response => {
+          this.coverage_by_year_chart = this.$echarts.init(document.getElementById('coverageByYear'));
+          this.coverage_by_year_chart.setOption({
+              tooltip : {
+                  trigger: 'axis',
+                  formatter: function (params) {
+                    var html=params[0].name+"<br>";
+                      for(var i=0;i<params.length;i++){
+                         html+='<span style="display:inline-block;margin-right:5px;border-radius:10px;width:10px;height:10px;background-color:'+params[i].color+';"></span>'
+                          if(params[i].valueType=="percent"){
+                              html+=params[i].seriesName+": "+params[i].value+"%<br>";
+                          }else{
+                            html+=params[i].seriesName+": "+params[i].value+"<br>";
+                          }
+                      }
+                      return html;
+                  },
+                  axisPointer: {
+                      type: 'cross',
+                      crossStyle: {
+                          color: '#999'
                       }
                   }
-                  return html;
               },
-              axisPointer: {
-                  type: 'cross',
-                  crossStyle: {
-                      color: '#999'
-                  }
-              }
-          },
-          //toolbox: {
-          //    feature: {
-          //        saveAsImage: {show: true}
-          //    }
-          //},
-          legend: {
-              data: ['Automated', 'Manual', 'Not Candidate', 'Automation Coverage'],
-              y: 'bottom'
-          },
-          xAxis: [
-              {
-                  type: 'category',
-                  data: ['2018', '2019', '2020'],
-                  axisPointer: {
-                      type: 'shadow'
-                  }
-              }
-          ],
-          yAxis: [
-              {
-                  type: 'value',
-                  name: 'Case Amount',
-                  min: 0,
-                  max: 1500,
-                  axisLabel: {
-                      formatter: '{value}'
-                  }
+              //toolbox: {
+              //    feature: {
+              //        saveAsImage: {show: true}
+              //    }
+              //},
+              legend: {
+                  data: ['Automated', 'Manual', 'Not Candidate', 'Automation Coverage'],
+                  y: 'bottom'
               },
-              {
-                  type: 'value',
-                  name: 'Coverage',
-                  min: 0,
-                  max: 100,
-                  axisLabel: {
-                      formatter: '{value} %'
+              xAxis: [
+                  {
+                      type: 'category',
+                      data: ['2018', '2019', '2020'],
+                      axisPointer: {
+                          type: 'shadow'
+                      }
                   }
-              }
-          ],
-          series: [
-              {
-                  name: 'Automated',
-                  type: 'bar',
-                  stack: '总量',
-                  color: '#8BBA72',
-                  label: {
-                      show: true,
-                      position: 'inside'
+              ],
+              yAxis: [
+                  {
+                      type: 'value',
+                      name: 'Case Amount',
+                      min: 0,
+                      max: 1500,
+                      axisLabel: {
+                          formatter: '{value}'
+                      }
                   },
-                  data: [670, 1020, 1080]
-              },
-              {
-                  name: 'Manual',
-                  type: 'bar',
-                  stack: '总量',
-                  color: '#E54D42',
-                  label: {
-                      show: true,
-                      position: 'inside'
+                  {
+                      type: 'value',
+                      name: 'Coverage',
+                      min: 0,
+                      max: 100,
+                      axisLabel: {
+                          formatter: '{value} %'
+                      }
+                  }
+              ],
+              series: [
+                  {
+                      name: 'Automated',
+                      type: 'bar',
+                      stack: '总量',
+                      color: '#8BBA72',
+                      label: {
+                          show: true,
+                          position: 'inside'
+                      },
+                      data: response.data["automated"]
                   },
-                  data: [220, 120, 80]
-              },
-              {
-                  name: 'Not Candidate',
-                  type: 'bar',
-                  stack: '总量',
-                  color: '#DCDCDC',
-                  label: {
-                      show: true,
-                      position: 'inside'
+                  {
+                      name: 'Manual',
+                      type: 'bar',
+                      stack: '总量',
+                      color: '#E54D42',
+                      label: {
+                          show: true,
+                          position: 'inside'
+                      },
+                      data: response.data["manual"]
                   },
-                  data: [110, 60, 40]
-              },
-              {
-                  name: 'Automation Coverage',
-                  type: 'line',
-                  yAxisIndex: 1,
-                  color: '#3A99D8',
-                  data: [67, 85, 90],
-                  valueType: 'percent'
-              }
-          ]
-      });
+                  {
+                      name: 'Not Candidate',
+                      type: 'bar',
+                      stack: '总量',
+                      color: '#DCDCDC',
+                      label: {
+                          show: true,
+                          position: 'inside'
+                      },
+                      data: response.data["not_candidate"]
+                  },
+                  {
+                      name: 'Automation Coverage',
+                      type: 'line',
+                      yAxisIndex: 1,
+                      color: '#3A99D8',
+                      data: response.data["coverage"],
+                      valueType: 'percent'
+                  }
+              ]
+          });
+        })
+        .catch(err => {console.log(err)})
     },
 
     draw_coverage_diff_by_year_chart: function() {
@@ -232,10 +224,6 @@ export default {
       });
     },
 
-    commaFormat(number) {
-      //return number.toFixed(2);
-      return (number || 0).toString().replace(/(\d)(?=(?:\d{3})+$)/g, "$1,");
-    },
   }
 
 }

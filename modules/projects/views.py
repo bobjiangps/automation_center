@@ -187,6 +187,21 @@ class AutomatedCaseAmount(APIView):
         return Response(count)
 
 
+class MockAutomationCoverageData(APIView):
+
+    queryset = AutomatedCase.objects.none()
+
+    def get(self, request):
+        """
+        Return amount of automation coverage data of project.
+        """
+        coverage = {"automated": [670, 1020, 1080],
+                    "manual": [220, 120, 80],
+                    "not_candidate": [110, 60, 40],
+                    "coverage": [67, 85, 90]}
+        return Response(coverage)
+
+
 # class ExampleParameterInUrl(APIView):
 #
 #     permission_classes = [IsSpecifiedProjectOrReadOnly]
