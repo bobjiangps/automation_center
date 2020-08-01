@@ -59,7 +59,8 @@
             <img v-if="this.$store.state.token" src="./assets/niming-no-gender.png" style="margin: 5px; width: 30px; height: 30px; border-radius: 50%;">
             <span v-if="this.$store.state.token">Hi, {{ this.$store.state.user }}</span>
             <a v-if="this.$store.state.token" @click="logout" :style="{ margin: '10px', padding: '5px' }">Logout</a>
-            <router-link v-else to="/login" :style="{ margin: '10px', padding: '5px' }">Login</router-link>
+            <!--<router-link v-else to="/login" :style="{ margin: '10px', padding: '5px' }">Login</router-link>-->
+            <a v-else @click="login" :style="{ margin: '10px', padding: '5px' }">Login</a>
           </div>
         </a-layout-header>
         <router-view/>
@@ -118,7 +119,7 @@ export default {
               this.$router.replace({
                 path: 'login',
                 query: {redirect: this.$router.currentRoute.fullPath}
-              })
+              });
           }
         }
       return Promise.reject(error.response.data)   // 返回接口返回的错误信息
@@ -151,8 +152,14 @@ export default {
     logout: function () {
       this.$store.dispatch('logout')
       .then(() => {
-        this.$router.push('/login')
+        this.$router.push('/login');
+        this.in_home_page = true;
       })
+    },
+
+    login: function() {
+      this.$router.push('/login');
+      this.in_home_page = true;
     },
 
     projectHref(project_id) {
