@@ -7,8 +7,8 @@
         </a-card>
       </a-col>
       <a-col :span="11">
-        <a-card title="Automation Coverage Diff to Last Year" :style="{margin: '20px 0px'}" :headStyle="{color:'#1874CD', fontWeight: 'bold'}">
-          <div id="coverageDiffByYear" :style="{width: '100%', height: '400px'}"></div>
+        <a-card title="Automation Coverage by Priority" :style="{margin: '20px 0px'}" :headStyle="{color:'#1874CD', fontWeight: 'bold'}">
+          <div id="coverageByPriority" :style="{width: '90%', height: '400px'}"></div>
         </a-card>
       </a-col>
     </a-row>
@@ -22,7 +22,7 @@ export default {
     return {
       projects: [],
       coverage_by_year_chart: '',
-      coverage_diff_by_year_chart: '',
+      coverage_by_priority_chart: '',
       temp: ''
     }
   },
@@ -37,7 +37,7 @@ export default {
 
   mounted: function() {
     this.draw_coverage_by_year_chart();
-    this.draw_coverage_diff_by_year_chart();
+    this.draw_coverage_by_priority_chart();
 
     var myEvent = new Event('resize');
     window.dispatchEvent(myEvent);
@@ -156,71 +156,106 @@ export default {
         .catch(err => {console.log(err)})
     },
 
-    draw_coverage_diff_by_year_chart: function() {
-      this.coverage_diff_by_year_chart = this.$echarts.init(document.getElementById('coverageDiffByYear'));
-      this.coverage_diff_by_year_chart.setOption({
-       tooltip: {
-          trigger: 'item',
-          formatter:'{b}: {c}%'
-        },
-        xAxis: {
-            type: 'value',
-            axisLabel: {
-              formatter: '{value} %'
-            },
-            position: 'top',
-            //max: 50,
-            //min: -50,
-            splitLine: {
-                lineStyle: {
-                    type: 'dashed'
-                }
-            }
-        },
-        yAxis: {
-            type: 'category',
-            axisLine: {
-              show: true,
-              onZero:true,
-              lineStyle:{
-                  color:"#000000",
+    draw_coverage_by_priority_chart: function() {
+      this.coverage_by_priority_chart = this.$echarts.init(document.getElementById('coverageByPriority'));
+      this.coverage_by_priority_chart.setOption({
+          tooltip : {
+              trigger: 'axis',
+              formatter: function (params) {
+                var html=params[0].name+"<br>";
+                  for(var i=0;i<params.length;i++){
+                     html+='<span style="display:inline-block;margin-right:5px;border-radius:10px;width:10px;height:10px;background-color:'+params[i].color+';"></span>'
+                      if(params[i].valueType=="percent"){
+                          html+=params[i].seriesName+": "+params[i].value+"%<br>";
+                      }else{
+                        html+=params[i].seriesName+": "+params[i].value+"<br>";
+                      }
+                  }
+                  return html;
+              },
+              axisPointer: {
+                  type: 'cross',
+                  crossStyle: {
+                      color: '#999'
+                  }
               }
-            },
-            axisLabel: {show: false},
-            axisTick: {show: false},
-            splitLine: {show: false},
-            data: this.projects
-        },
-        series: [
-            {
-                name: 'Coverage Diff',
-                type: 'bar',
-                stack: '总量',
-                label: {
-                    show: true,
-                    formatter: '{b}'
-                },
-                itemStyle: {
-                    normal: {
-                        // barBorderRadius: [0,4,4,0],
-                        color: function (data) {
-                            return data.value < 0 ? "#E82724" : "#00A212";
-                        },
-                        label: {
-                           show: true,
-                           position: 'inside',
-                           formatter: '{b}\n{c}%'
-                        }
-                    },
-
-                },
-                data: [
-                    -7,
-                    47,
-                    18
-                ]
-            }
-        ]
+          },
+          legend: {
+              data: ['Automated', 'Manual', 'Not Candidate', 'Automation Coverage'],
+              y: 'bottom'
+          },
+          xAxis: [
+              {
+                  type: 'category',
+                  data: ['P1', 'P2', 'P3'],
+                  axisPointer: {
+                      type: 'shadow'
+                  }
+              }
+          ],
+          yAxis: [
+              {
+                  type: 'value',
+                  name: 'Case Amount',
+                  min: 0,
+                  max: 800,
+                  axisLabel: {
+                      formatter: '{value}'
+                  }
+              },
+              {
+                  type: 'value',
+                  name: 'Coverage',
+                  min: 0,
+                  max: 100,
+                  axisLabel: {
+                      formatter: '{value} %'
+                  }
+              }
+          ],
+          series: [
+              {
+                  name: 'Automated',
+                  type: 'bar',
+                  stack: '总量',
+                  color: '#8BBA72',
+                  label: {
+                      show: true,
+                      position: 'inside'
+                  },
+                  data: [270, 705, 105]
+              },
+              {
+                  name: 'Manual',
+                  type: 'bar',
+                  stack: '总量',
+                  color: '#E54D42',
+                  label: {
+                      show: true,
+                      position: 'inside'
+                  },
+                  data: [13, 35, 32]
+              },
+              {
+                  name: 'Not Candidate',
+                  type: 'bar',
+                  stack: '总量',
+                  color: '#DCDCDC',
+                  label: {
+                      show: true,
+                      position: 'inside'
+                  },
+                  data: [7, 22, 11]
+              },
+              {
+                  name: 'Automation Coverage',
+                  type: 'line',
+                  yAxisIndex: 1,
+                  color: '#3A99D8',
+                  data: [95.4, 95.27, 76.64],
+                  valueType: 'percent'
+              }
+          ]
       });
     },
 
