@@ -12,6 +12,7 @@ from rest_framework.authtoken.views import ObtainAuthToken
 from rest_framework.views import APIView
 from django.core.exceptions import ObjectDoesNotExist
 from rest_framework.permissions import IsAuthenticated
+from rest_framework import filters
 import datetime
 
 
@@ -35,6 +36,8 @@ class UserViewSet(viewsets.ModelViewSet):
     permission_classes = [IsSuperUserOrReadOnly]
     queryset = User.objects.all().order_by('-date_joined')
     serializer_class = UserSerializer
+    filter_backends = [filters.SearchFilter]
+    search_fields = ["username", "email"]
 
 
 class GroupViewSet(viewsets.ModelViewSet):
