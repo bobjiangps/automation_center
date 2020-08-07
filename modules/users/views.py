@@ -60,6 +60,8 @@ class GroupViewSet(viewsets.ModelViewSet):
     permission_classes = [IsSuperUserOrReadOnly]
     queryset = Group.objects.all().order_by('id')
     serializer_class = GroupSerializer
+    filter_backends = [filters.SearchFilter]
+    search_fields = ["name"]
 
 
 class PermissionViewSet(viewsets.ReadOnlyModelViewSet):
@@ -67,8 +69,11 @@ class PermissionViewSet(viewsets.ReadOnlyModelViewSet):
         get:
             Return all permissions.
     """
+    permission_classes = [IsSuperUserOrReadOnly]
     queryset = Permission.objects.all().order_by('id')
     serializer_class = PermissionSerializer
+    filter_backends = [filters.SearchFilter]
+    search_fields = ["name", "codename"]
 
 
 class ObtainExpiringAuthToken(ObtainAuthToken):
@@ -107,7 +112,7 @@ class ObtainExpiringAuthToken(ObtainAuthToken):
 
     @staticmethod
     def list_perms(user):
-        exclude_list = ["token", "contenttype", "session", "logentry", "permission"]
+        exclude_list = ["token", "contenttype", "session", "logentry"]
         user_perms_dict = {}
         user_perms_list = []
         for am in apps.get_models():
