@@ -33,7 +33,7 @@ class UserViewSet(viewsets.ModelViewSet):
         delete:
             Delete existing user.
     """
-    permission_classes = [IsSuperUserOrReadOnly]
+    # permission_classes = [IsSuperUserOrReadOnly]
     queryset = User.objects.all().order_by('-date_joined')
     serializer_class = UserSerializer
     filter_backends = [filters.SearchFilter]
@@ -57,7 +57,7 @@ class GroupViewSet(viewsets.ModelViewSet):
         delete:
             Delete existing group.
     """
-    permission_classes = [IsSuperUserOrReadOnly]
+    # permission_classes = [IsSuperUserOrReadOnly]
     queryset = Group.objects.all().order_by('id')
     serializer_class = GroupSerializer
     filter_backends = [filters.SearchFilter]
@@ -69,7 +69,7 @@ class PermissionViewSet(viewsets.ReadOnlyModelViewSet):
         get:
             Return all permissions.
     """
-    permission_classes = [IsSuperUserOrReadOnly]
+    # permission_classes = [IsSuperUserOrReadOnly]
     queryset = Permission.objects.all().order_by('id')
     serializer_class = PermissionSerializer
     filter_backends = [filters.SearchFilter]

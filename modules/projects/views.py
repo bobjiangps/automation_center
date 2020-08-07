@@ -125,7 +125,7 @@ class ProjectList(generics.ListCreateAPIView):
         post:
             Create a new project.
     """
-    permission_classes = [IsSuperUserOrReadOnly]
+    # permission_classes = [IsSuperUserOrReadOnly]
     queryset = Project.objects.all().order_by("id")
     serializer_class = ProjectSerializer
     filter_backends = [filters.SearchFilter]
@@ -144,7 +144,7 @@ class ProjectDetail(generics.RetrieveUpdateAPIView):
             Update one or more fields on an existing project.
 
     """
-    permission_classes = [IsSpecifiedProjectOrReadOnly]
+    # permission_classes = [IsSpecifiedProjectOrReadOnly]
     queryset = Project.objects.all()
     serializer_class = ProjectSerializer
 
