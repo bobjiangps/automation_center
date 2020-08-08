@@ -76,6 +76,22 @@ class PermissionViewSet(viewsets.ReadOnlyModelViewSet):
     search_fields = ["name", "codename"]
 
 
+class CurrentUser(APIView):
+    queryset = User.objects.none()
+
+    def get(self, request):
+        current_user = request.user
+        if current_user.is_authenticated:
+            serializer = UserSerializer(current_user)
+            return Response({"id": serializer.data["id"],
+                             "username": serializer.data["username"],
+                             "email": serializer.data["email"],
+                             "permissions": ObtainExpiringAuthToken.list_perms(current_user)
+                             })
+        else:
+            return Response({"error": "not login"})
+
+
 class ObtainExpiringAuthToken(ObtainAuthToken):
 
     def post(self, request, *args, **kwargs):
@@ -112,7 +128,7 @@ class ObtainExpiringAuthToken(ObtainAuthToken):
 
     @staticmethod
     def list_perms(user):
-        exclude_list = ["token", "contenttype", "session", "logentry"]
+        exclude_list = ["token", "contenttype", "session", "logentry", "permission"]
         user_perms_dict = {}
         user_perms_list = []
         for am in apps.get_models():

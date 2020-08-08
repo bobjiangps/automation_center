@@ -41,5 +41,6 @@ urlpatterns = [
     path('automation/api/login/', u_views.ObtainExpiringAuthToken.as_view(), name='login'),
     # path('automation/api/logout/', u_views.ObtainExpiringAuthToken.as_view(), name='logout'),
     path('automation/api/logout/', u_views.RevokeAuthToken.as_view(), name='logout'),
-    path('automation/api/docs/', schema_view, name='docs')
+    path('automation/api/docs/', schema_view, name='docs'),
+    path('automation/api/users/me', u_views.CurrentUser.as_view(), name='current_user')
 ]
