@@ -14,6 +14,7 @@ from django.core.exceptions import ObjectDoesNotExist
 from rest_framework.permissions import IsAuthenticated
 from rest_framework import filters
 import datetime
+from modules.projects.models import Project
 
 
 class UserViewSet(viewsets.ModelViewSet):
@@ -82,14 +83,35 @@ class CurrentUser(APIView):
     def get(self, request):
         current_user = request.user
         if current_user.is_authenticated:
+            project_id = self.request.query_params.get("project_id", None)
+            in_admin = False
+            for g in current_user.groups.all():
+                if g.name == "Admin":
+                    in_admin = True
+                    break
             serializer = UserSerializer(current_user)
-            return Response({"id": serializer.data["id"],
-                             "username": serializer.data["username"],
-                             "email": serializer.data["email"],
-                             "permissions": ObtainExpiringAuthToken.list_perms(current_user)
-                             })
+            if project_id:
+                project = Project.objects.filter(id=project_id)
+                if len(project) > 0:
+                    return Response({"id": serializer.data["id"],
+                                     "username": serializer.data["username"],
+                                     "email": serializer.data["email"],
+                                     "admin": current_user.is_superuser or in_admin,
+                                     "project": project[0].name,
+                                     "permissions": ObtainExpiringAuthToken.list_perms(current_user)
+                                     })
+                else:
+                    return Response({"error": "project not exist"})
+            else:
+                return Response({"id": serializer.data["id"],
+                                 "username": serializer.data["username"],
+                                 "email": serializer.data["email"],
+                                 "admin": current_user.is_superuser or in_admin,
+                                 "project": None,
+                                 "permissions": ObtainExpiringAuthToken.list_perms(current_user)
+                                 })
         else:
-            return Response({"error": "not login"})
+            return Response({"error": "not authenticated"})
 
 
 class ObtainExpiringAuthToken(ObtainAuthToken):
