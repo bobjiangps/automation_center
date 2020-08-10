@@ -120,22 +120,21 @@ class ObtainExpiringAuthToken(ObtainAuthToken):
                 return Response({"id": user.pk,
                                  "username": user.username,
                                  "mail": user.email,
-                                 "token": token.key,
-                                 "permissions": self.list_perms(user)})
+                                 "token": token.key})
             else:
                 return Response({"token": token.key})
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     @staticmethod
     def list_perms(user):
-        exclude_list = ["token", "contenttype", "session", "logentry", "permission"]
+        exclude_list = ["token", "contenttype", "session", "logentry"]
         user_perms_dict = {}
         user_perms_list = []
         for am in apps.get_models():
             name = am.__name__.lower()
             if name not in exclude_list:
                 # user_perms_dict[name] = ["view"]
-                user_perms_dict[name] = []
+                user_perms_dict[name] = ["read"]
                 user_perms_list.append(name)
         default_all_perms = user.get_all_permissions()
         for perm in default_all_perms:
