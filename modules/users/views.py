@@ -128,6 +128,7 @@ class ObtainExpiringAuthToken(ObtainAuthToken):
     @staticmethod
     def list_perms(user):
         exclude_list = ["token", "contenttype", "session", "logentry"]
+        readonly_list = ["permission"]
         user_perms_dict = {}
         user_perms_list = []
         for am in apps.get_models():
@@ -147,7 +148,7 @@ class ObtainExpiringAuthToken(ObtainAuthToken):
                 continue
             if action in action_new_name.keys():
                 action = action_new_name[action]
-            if module not in exclude_list:
+            if module not in exclude_list and module not in readonly_list:
                 if module in user_perms_list:
                     if action not in user_perms_dict[module]:
                         user_perms_dict[module].append(action)
