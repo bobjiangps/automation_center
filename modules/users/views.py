@@ -84,7 +84,7 @@ class CurrentUser(APIView):
         current_user = request.user
         if current_user.is_authenticated:
             project_id = self.request.query_params.get("project_id", None)
-            in_admin = False
+            in_admin = True if request.user.is_superuser else False
             for g in current_user.groups.all():
                 if g.name == "Admin":
                     in_admin = True
@@ -93,13 +93,22 @@ class CurrentUser(APIView):
             if project_id:
                 project = Project.objects.filter(id=project_id)
                 if len(project) > 0:
-                    return Response({"id": serializer.data["id"],
-                                     "username": serializer.data["username"],
-                                     "email": serializer.data["email"],
-                                     "admin": current_user.is_superuser or in_admin,
-                                     "project": project[0].name,
-                                     "permissions": ObtainExpiringAuthToken.list_perms(current_user)
-                                     })
+                    if request.user in project[0].owner.all() or request.user.is_superuser:
+                        return Response({"id": serializer.data["id"],
+                                         "username": serializer.data["username"],
+                                         "email": serializer.data["email"],
+                                         "admin": current_user.is_superuser or in_admin,
+                                         "project": project[0].name,
+                                         "permissions": ObtainExpiringAuthToken.list_perms(current_user)
+                                         })
+                    else:
+                        return Response({"id": serializer.data["id"],
+                                         "username": serializer.data["username"],
+                                         "email": serializer.data["email"],
+                                         "admin": current_user.is_superuser or in_admin,
+                                         "project": project[0].name,
+                                         "permissions": []
+                                         })
                 else:
                     return Response({"error": "project not exist"})
             else:
