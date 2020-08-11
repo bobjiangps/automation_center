@@ -1,9 +1,19 @@
 from rest_framework.permissions import BasePermission
 from rest_framework.permissions import DjangoModelPermissions
+from modules.users.views import ObtainExpiringAuthToken
 from modules.projects.models import Project
 
 
 SAFE_METHODS = ('GET', 'HEAD', 'OPTIONS')
+METHODS_RELATIONS = {
+    "GET": "read",
+    "HEAD": "read",
+    "OPTIONS": "read",
+    "POST": "create",
+    "PUT": "update",
+    "PATCH": "update",
+    "DELETE": "delete"
+}
 
 
 class ReadOnly(BasePermission):
@@ -80,6 +90,33 @@ class IsSpecifiedProjectOrReadOnly(BasePermission):
             request.method in SAFE_METHODS or
             request.user and
             request.user.id in allow_owners or
+            request.user.is_superuser
+        )
+
+
+class IsSpecifiedProject(BasePermission):
+    """
+    The request user is authenticated to specified project and user has corresponding permission like read/update,
+    or super user, not allow read-only request.
+    """
+
+    def has_object_permission(self, request, view, obj):
+        if obj._meta.object_name == "Project":
+            project_id = obj.id
+        else:
+            project_id = obj.project_id
+        allow_owners = []
+        for o in Project.objects.filter(id=project_id)[0].owner.values():
+            allow_owners.append(o["id"])
+        method_allowed = False
+        user_permission = ObtainExpiringAuthToken.list_perms(request.user)[obj._meta.object_name.lower()]
+        if METHODS_RELATIONS[request.method] in user_permission:
+            method_allowed = True
+
+        return bool(
+            request.user and
+            request.user.id in allow_owners and
+            method_allowed or
             request.user.is_superuser
         )
 
