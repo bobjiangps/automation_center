@@ -1,7 +1,7 @@
 from django.contrib.auth.models import User, Group, Permission
 from rest_framework import viewsets
 from .serializers import UserSerializer, GroupSerializer, PermissionSerializer
-from utils.permission import IsSuperUserOrReadOnly
+# from utils.permission import IsSuperUserOrReadOnly
 from django.utils import timezone
 from django.apps import apps
 from django.conf import settings

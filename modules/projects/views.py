@@ -114,7 +114,7 @@ from rest_framework import generics
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import filters
-from utils.permission import IsSpecifiedProjectOrReadOnly, IsSuperUserOrReadOnly
+from utils.permission import IsSpecifiedProject, IsSuperUserOrReadOnly
 
 
 class ProjectList(generics.ListCreateAPIView):
@@ -144,7 +144,7 @@ class ProjectDetail(generics.RetrieveUpdateAPIView):
             Update one or more fields on an existing project.
 
     """
-    # permission_classes = [IsSpecifiedProjectOrReadOnly]
+    permission_classes = [IsSpecifiedProject]
     queryset = Project.objects.all()
     serializer_class = ProjectSerializer
 
@@ -202,6 +202,22 @@ class MockAutomationCoverageData(APIView):
         return Response(coverage)
 
 
+# class ExampleParameterInUrlBetter(APIView):
+#
+#     permission_classes = [IsSpecifiedProjectOrReadOnly]
+#     queryset = Project.objects.none()
+#
+#     def get(self, request, project_id, user_id):
+#         """
+#         Example to pass parameters from url which is better, url example: '/projects?project_id=2&user_id=3'
+#         """
+#         print(request.query_params)
+#         project_id = request.query_params.get("project_id", None)
+#         user_id = request.query_params.get("user_id", None)
+#         count = {"count": Project.objects.count(), "project_id": project_id, "user_id": user_id}
+#         return Response(count)
+#
+#
 # class ExampleParameterInUrl(APIView):
 #
 #     permission_classes = [IsSpecifiedProjectOrReadOnly]
