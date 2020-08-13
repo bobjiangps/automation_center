@@ -1,6 +1,7 @@
 from django.contrib.auth.models import User, Group, Permission
 from django.contrib.auth import get_user_model
 from rest_framework import serializers
+from modules.users.models import Role
 
 
 class UserSerializer(serializers.ModelSerializer):
@@ -41,6 +42,13 @@ class GroupSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Group
+        fields = "__all__"
+
+
+class RoleSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = Role
         fields = "__all__"
 
 

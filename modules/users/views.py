@@ -1,6 +1,6 @@
 from django.contrib.auth.models import User, Group, Permission
 from rest_framework import viewsets
-from .serializers import UserSerializer, GroupSerializer, PermissionSerializer
+from .serializers import UserSerializer, GroupSerializer, RoleSerializer, PermissionSerializer
 # from utils.permission import IsSuperUserOrReadOnly
 from django.utils import timezone
 from django.apps import apps
@@ -15,6 +15,7 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework import filters
 import datetime
 from modules.projects.models import Project
+from modules.users.models import Role
 
 
 class UserViewSet(viewsets.ModelViewSet):
@@ -59,10 +60,31 @@ class GroupViewSet(viewsets.ModelViewSet):
             Delete existing group.
     """
     # permission_classes = [IsSuperUserOrReadOnly]
-    queryset = Group.objects.all().order_by('id')
+    queryset = Group.objects.all().order_by('-id')
     serializer_class = GroupSerializer
     filter_backends = [filters.SearchFilter]
     search_fields = ["name"]
+
+
+class RoleViewSet(viewsets.ModelViewSet):
+    """
+        get:
+            Return all roles.
+
+        post:
+            Create a new role.
+
+        put:
+            Update a role.
+
+        patch:
+            Update one or more fields on an existing role.
+
+        delete:
+            Delete existing role.
+    """
+    queryset = Role.objects.all().order_by('-id')
+    serializer_class = RoleSerializer
 
 
 class PermissionViewSet(viewsets.ReadOnlyModelViewSet):
@@ -71,7 +93,7 @@ class PermissionViewSet(viewsets.ReadOnlyModelViewSet):
             Return all permissions.
     """
     # permission_classes = [IsSuperUserOrReadOnly]
-    queryset = Permission.objects.all().order_by('id')
+    queryset = Permission.objects.all().order_by('-id')
     serializer_class = PermissionSerializer
     filter_backends = [filters.SearchFilter]
     search_fields = ["name", "codename"]

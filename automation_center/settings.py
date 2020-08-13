@@ -50,7 +50,8 @@ INSTALLED_APPS = [
     'rest_framework.authtoken',
     'corsheaders',
     'modules.projects',
-    'modules.execution'
+    'modules.execution',
+    'modules.users'
 ]
 
 MIDDLEWARE = [
