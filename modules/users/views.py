@@ -13,9 +13,9 @@ from rest_framework.views import APIView
 from django.core.exceptions import ObjectDoesNotExist
 from rest_framework.permissions import IsAuthenticated
 from rest_framework import filters
-import datetime
 from modules.projects.models import Project
 from modules.users.models import Role
+import datetime
 
 
 class UserViewSet(viewsets.ModelViewSet):
@@ -106,38 +106,22 @@ class CurrentUser(APIView):
         current_user = request.user
         if current_user.is_authenticated:
             project_id = self.request.query_params.get("project_id", None)
-            in_admin = True if request.user.is_superuser else False
-            for g in current_user.groups.all():
-                if g.name == "Admin":
-                    in_admin = True
-                    break
             serializer = UserSerializer(current_user)
             if project_id:
                 project = Project.objects.filter(id=project_id)
                 if len(project) > 0:
-                    if request.user in project[0].owner.all() or request.user.is_superuser:
-                        return Response({"id": serializer.data["id"],
-                                         "username": serializer.data["username"],
-                                         "email": serializer.data["email"],
-                                         "admin": current_user.is_superuser or in_admin,
-                                         "project": project[0].name,
-                                         "permissions": ObtainExpiringAuthToken.list_perms(current_user)
-                                         })
-                    else:
-                        return Response({"id": serializer.data["id"],
-                                         "username": serializer.data["username"],
-                                         "email": serializer.data["email"],
-                                         "admin": current_user.is_superuser or in_admin,
-                                         "project": project[0].name,
-                                         "permissions": []
-                                         })
+                    return Response({"id": serializer.data["id"],
+                                     "username": serializer.data["username"],
+                                     "email": serializer.data["email"],
+                                     "project": project[0].name,
+                                     "permissions": ObtainExpiringAuthToken.list_perms(current_user, project_id=project_id)
+                                     })
                 else:
                     return Response({"error": "project not exist"})
             else:
                 return Response({"id": serializer.data["id"],
                                  "username": serializer.data["username"],
                                  "email": serializer.data["email"],
-                                 "admin": current_user.is_superuser or in_admin,
                                  "project": None,
                                  "permissions": ObtainExpiringAuthToken.list_perms(current_user)
                                  })
@@ -179,7 +163,7 @@ class ObtainExpiringAuthToken(ObtainAuthToken):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     @staticmethod
-    def list_perms(user):
+    def list_perms(user, project_id=None):
         exclude_list = ["token", "contenttype", "session", "logentry"]
         readonly_list = ["permission"]
         user_perms_dict = {}
@@ -191,6 +175,31 @@ class ObtainExpiringAuthToken(ObtainAuthToken):
                 user_perms_dict[name] = ["read"]
                 user_perms_list.append(name)
         default_all_perms = user.get_all_permissions()
+        user_groups = []
+        non_business_all_perms = set()
+        for r in Role.objects.filter(user_id=user.id):
+            if r.group not in user_groups:
+                user_groups.append(r.group)
+        for group in set(user_groups):
+            for p in group.permissions.all():
+                nk = p.natural_key()
+                if nk[1] in ["users", "auth"] or nk[0] == "add_project":
+                    non_business_all_perms.add(".".join([nk[1], nk[0]]))
+        default_all_perms.update(non_business_all_perms)
+        if project_id:
+            user_role = Role.objects.filter(user_id=user.id).filter(project_id=project_id)
+            user_permission_in_project = False
+            for ur in user_role:
+                if user_permission_in_project:
+                    user_permission_in_project = user_permission_in_project | Group.objects.filter(id=ur.group_id)[0].permissions.all()
+                else:
+                    user_permission_in_project = Group.objects.filter(id=ur.group_id)[0].permissions.all()
+            if user_permission_in_project:
+                project_all_perms = set()
+                for upp in user_permission_in_project:
+                    nk = upp.natural_key()
+                    project_all_perms.add(".".join([nk[1], nk[0]]))
+                default_all_perms.update(project_all_perms)
         for perm in default_all_perms:
             new_perm = perm.split(".")[-1]
             action, module = new_perm.split("_")
