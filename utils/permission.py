@@ -1,7 +1,8 @@
 from rest_framework.permissions import BasePermission
 from rest_framework.permissions import DjangoModelPermissions
 from modules.users.views import ObtainExpiringAuthToken
-from modules.projects.models import Project
+# from modules.projects.models import Project
+from modules.users.models import Role
 
 
 SAFE_METHODS = ('GET', 'HEAD', 'OPTIONS')
@@ -83,8 +84,10 @@ class IsSpecifiedProjectOrReadOnly(BasePermission):
         else:
             project_id = obj.project_id
         allow_owners = []
-        for o in Project.objects.filter(id=project_id)[0].owner.values():
-            allow_owners.append(o["id"])
+        # for o in Project.objects.filter(id=project_id)[0].owner.values():
+        #     allow_owners.append(o["id"])
+        for r in Role.objects.filter(project_id=project_id):
+            allow_owners.append(r.user_id)
 
         return bool(
             request.method in SAFE_METHODS or
@@ -106,16 +109,39 @@ class IsSpecifiedProject(BasePermission):
         else:
             project_id = obj.project_id
         allow_owners = []
-        for o in Project.objects.filter(id=project_id)[0].owner.values():
-            allow_owners.append(o["id"])
+        # for o in Project.objects.filter(id=project_id)[0].owner.values():
+        #     allow_owners.append(o["id"])
+        for r in Role.objects.filter(project_id=project_id):
+            allow_owners.append(r.user_id)
         method_allowed = False
-        user_permission = ObtainExpiringAuthToken.list_perms(request.user)[obj._meta.object_name.lower()]
+        user_permission = ObtainExpiringAuthToken.list_perms(request.user, project_id=project_id)[obj._meta.object_name.lower()]
         if METHODS_RELATIONS[request.method] in user_permission:
             method_allowed = True
 
         return bool(
             request.user and
             request.user.id in allow_owners and
+            method_allowed or
+            request.user.is_superuser
+        )
+
+
+class HasAssignedPermission(BasePermission):
+    """
+    The request user has corresponding permission like read/update,
+    or super user, not allow read-only request.
+    """
+    def has_permission(self, request, view):
+        view_meta = view.queryset.model._meta
+
+        # project
+        method_allowed = False
+        user_permission = ObtainExpiringAuthToken.list_perms(request.user)[view_meta.model_name.lower()]
+        if METHODS_RELATIONS[request.method] in user_permission:
+            method_allowed = True
+
+        return bool(
+            request.user and
             method_allowed or
             request.user.is_superuser
         )

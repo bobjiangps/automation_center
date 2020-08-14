@@ -114,7 +114,7 @@ from rest_framework import generics
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import filters
-from utils.permission import IsSpecifiedProject, IsSuperUserOrReadOnly
+from utils.permission import IsSpecifiedProject, HasAssignedPermission, IsSuperUserOrReadOnly
 
 
 class ProjectList(generics.ListCreateAPIView):
@@ -126,6 +126,7 @@ class ProjectList(generics.ListCreateAPIView):
             Create a new project.
     """
     # permission_classes = [IsSuperUserOrReadOnly]
+    permission_classes = [HasAssignedPermission]
     queryset = Project.objects.all().order_by("id")
     serializer_class = ProjectSerializer
     filter_backends = [filters.SearchFilter]
