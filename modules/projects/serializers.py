@@ -1,6 +1,6 @@
 from .models import Project
 from rest_framework import serializers
-from modules.users.serializers import OwnerSerializer
+from django.contrib.auth.models import User
 
 
 # class ProjectSerializer(serializers.Serializer):
@@ -57,3 +57,10 @@ class ProjectSerializer(serializers.ModelSerializer):
         response = super().to_representation(instance)
         response['owner'] = OwnerSerializer(instance.owner, many=True).data
         return response
+
+
+class OwnerSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = User
+        fields = ["id", "username", "email"]

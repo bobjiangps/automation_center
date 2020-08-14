@@ -2,6 +2,7 @@ from django.contrib.auth.models import User, Group, Permission
 from django.contrib.auth import get_user_model
 from rest_framework import serializers
 from modules.users.models import Role
+from modules.projects.serializers import ProjectSerializer
 
 
 class UserSerializer(serializers.ModelSerializer):
@@ -31,13 +32,6 @@ class UserSerializer(serializers.ModelSerializer):
         return super(UserSerializer, self).update(instance, validated_data)
 
 
-class OwnerSerializer(serializers.ModelSerializer):
-
-    class Meta:
-        model = User
-        fields = ["id", "username", "email"]
-
-
 class GroupSerializer(serializers.ModelSerializer):
 
     class Meta:
@@ -50,6 +44,16 @@ class RoleSerializer(serializers.ModelSerializer):
     class Meta:
         model = Role
         fields = "__all__"
+
+    def to_representation(self, instance):
+        response = super().to_representation(instance)
+        group_data = GroupSerializer(instance.group).data
+        project_data = ProjectSerializer(instance.project).data
+        user_data = UserSerializer(instance.user).data
+        response['group'] = {"id": group_data["id"], "name": group_data["name"]}
+        response['project'] = {"id": project_data["id"], "name": project_data["name"]}
+        response['user'] = {"id": user_data["id"], "username": user_data["username"], "email": user_data["email"]}
+        return response
 
 
 class PermissionSerializer(serializers.ModelSerializer):
