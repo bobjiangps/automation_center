@@ -53,10 +53,10 @@ class ProjectSerializer(serializers.ModelSerializer):
         model = Project
         fields = "__all__"
 
-    def to_representation(self, instance):
-        response = super().to_representation(instance)
-        response['owner'] = OwnerSerializer(instance.owner, many=True).data
-        return response
+    # def to_representation(self, instance):
+    #     response = super().to_representation(instance)
+    #     response['owner'] = OwnerSerializer(instance.owner, many=True).data
+    #     return response
 
 
 class OwnerSerializer(serializers.ModelSerializer):

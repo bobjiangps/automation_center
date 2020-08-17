@@ -133,17 +133,18 @@ class ProjectList(generics.ListCreateAPIView):
     filter_backends = [filters.SearchFilter]
     search_fields = ["name", "=project_type"]
 
-    def get_queryset(self):
-        current_user = self.request.user
-        if current_user.is_superuser:
-            queryset = Project.objects.all().order_by("-id")
-        else:
-            roles_of_user = Role.objects.filter(user_id=current_user.id)
-            projects_of_user = []
-            for ru in roles_of_user:
-                projects_of_user.append(ru.project_id)
-            queryset = Project.objects.filter(id__in=projects_of_user)
-        return queryset
+    # if you want to limit the project list which display to user, use following code
+    # def get_queryset(self):
+    #     current_user = self.request.user
+    #     if current_user.is_superuser:
+    #         queryset = Project.objects.all().order_by("-id")
+    #     else:
+    #         roles_of_user = Role.objects.filter(user_id=current_user.id)
+    #         projects_of_user = []
+    #         for ru in roles_of_user:
+    #             projects_of_user.append(ru.project_id)
+    #         queryset = Project.objects.filter(id__in=projects_of_user)
+    #     return queryset
 
 
 class ProjectDetail(generics.RetrieveUpdateAPIView):

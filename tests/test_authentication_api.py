@@ -35,12 +35,11 @@ class AuthenticationTest(APITestCase):
     def test_get_user_info_when_login(self):
         user_response = self.client.post("/automation/api/login/", self.user_data, format="json")
         response_keys = json.loads(user_response.content).keys()
-        self.assertEqual(5, len(response_keys))
+        self.assertEqual(4, len(response_keys))
         self.assertTrue("id" in response_keys)
         self.assertTrue("username" in response_keys)
         self.assertTrue("mail" in response_keys)
         self.assertTrue("token" in response_keys)
-        self.assertTrue("permissions" in response_keys)
         self.assertEqual(user_response.status_code, status.HTTP_200_OK)
 
     def test_token_should_be_deleted_after_logout(self):

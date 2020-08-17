@@ -13,7 +13,7 @@ class Project(models.Model):
     project_type = models.CharField(choices=PROJECT_TYPES, default=PROJECT_TYPES[0][0], max_length=100)
     create_time = models.DateTimeField(default=timezone.now)
     update_time = models.DateTimeField(default=timezone.now)
-    owner = models.ManyToManyField(User, blank=True)
+    # owner = models.ManyToManyField(User, blank=True)
 
     def __str__(self):
         return self.name
