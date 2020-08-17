@@ -115,6 +115,7 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import filters
 from utils.permission import IsSpecifiedProject, HasAssignedPermission, IsSuperUserOrReadOnly
+from modules.users.models import Role
 
 
 class ProjectList(generics.ListCreateAPIView):
@@ -127,10 +128,22 @@ class ProjectList(generics.ListCreateAPIView):
     """
     # permission_classes = [IsSuperUserOrReadOnly]
     permission_classes = [HasAssignedPermission]
-    queryset = Project.objects.all().order_by("id")
+    queryset = Project.objects.all().order_by("-id")
     serializer_class = ProjectSerializer
     filter_backends = [filters.SearchFilter]
     search_fields = ["name", "=project_type"]
+
+    def get_queryset(self):
+        current_user = self.request.user
+        if current_user.is_superuser:
+            queryset = Project.objects.all().order_by("-id")
+        else:
+            roles_of_user = Role.objects.filter(user_id=current_user.id)
+            projects_of_user = []
+            for ru in roles_of_user:
+                projects_of_user.append(ru.project_id)
+            queryset = Project.objects.filter(id__in=projects_of_user)
+        return queryset
 
 
 class ProjectDetail(generics.RetrieveUpdateAPIView):
