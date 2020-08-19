@@ -20,6 +20,7 @@ from rest_framework.schemas import get_schema_view
 from rest_framework_swagger.renderers import SwaggerUIRenderer, OpenAPIRenderer
 # from rest_framework.authtoken.views import obtain_auth_token
 from modules.users import views as u_views
+from modules.users import views_auth_token as uat_views
 
 
 router = routers.DefaultRouter()
@@ -38,10 +39,10 @@ urlpatterns = [
     path('automation/admin/', admin.site.urls),
     path('automation/api-auth/', include('rest_framework.urls', namespace='rest_framework')),
     # path('automation/api/api-token-auth/', obtain_auth_token, name='api_token_auth'),
-    path('automation/api/api-token-auth/', u_views.ObtainExpiringAuthToken.as_view(), name='api_token_auth'),
-    path('automation/api/login/', u_views.ObtainExpiringAuthToken.as_view(), name='login'),
-    # path('automation/api/logout/', u_views.ObtainExpiringAuthToken.as_view(), name='logout'),
-    path('automation/api/logout/', u_views.RevokeAuthToken.as_view(), name='logout'),
+    path('automation/api/api-token-auth/', uat_views.ObtainExpiringAuthToken.as_view(), name='api_token_auth'),
+    path('automation/api/login/', uat_views.ObtainExpiringAuthToken.as_view(), name='login'),
+    # path('automation/api/logout/', uat_views.ObtainExpiringAuthToken.as_view(), name='logout'),
+    path('automation/api/logout/', uat_views.RevokeAuthToken.as_view(), name='logout'),
     path('automation/api/docs/', schema_view, name='docs'),
     path('automation/api/users/me', u_views.CurrentUser.as_view(), name='current_user')
 ]
