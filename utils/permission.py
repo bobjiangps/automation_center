@@ -132,7 +132,11 @@ class HasAssignedPermission(BasePermission):
     or super user, not allow read-only request.
     """
     def has_permission(self, request, view):
-        view_meta = view.queryset.model._meta
+        try:
+            view_meta = view.queryset.model._meta
+        except AttributeError:
+            view_meta = view.get_queryset().model._meta
+        # print(view.kwargs)
 
         # project
         method_allowed = False
