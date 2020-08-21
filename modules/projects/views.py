@@ -133,7 +133,7 @@ class ProjectList(generics.ListCreateAPIView):
     filter_backends = [filters.SearchFilter]
     search_fields = ["name", "=project_type"]
 
-    # if you want to limit the project list which display to user, use following code
+    # # if you want to limit the project list which display to user, use following code
     # def get_queryset(self):
     #     current_user = self.request.user
     #     if current_user.is_superuser:

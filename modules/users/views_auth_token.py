@@ -55,7 +55,8 @@ class ObtainExpiringAuthToken(ObtainAuthToken):
             name = am.__name__.lower()
             if name not in exclude_list:
                 # user_perms_dict[name] = ["view"]
-                user_perms_dict[name] = ["read"]
+                # user_perms_dict[name] = []
+                user_perms_dict[name] = ["read"]  # allow read as default
                 user_perms_list.append(name)
         default_all_perms = user.get_all_permissions()
         user_groups = []
@@ -66,7 +67,7 @@ class ObtainExpiringAuthToken(ObtainAuthToken):
         for group in set(user_groups):
             for p in group.permissions.all():
                 nk = p.natural_key()
-                if nk[1] in ["users", "auth"] or nk[0] == "add_project":
+                if nk[1] in ["users", "auth"] or nk[0] in ["add_project", "view_project"]:
                     non_business_all_perms.add(".".join([nk[1], nk[0]]))
         default_all_perms.update(non_business_all_perms)
         if project_id:
