@@ -151,6 +151,37 @@ class HasAssignedPermission(BasePermission):
         )
 
 
+class HasAssignedPermissionInProject(BasePermission):
+    """
+    The request user has corresponding permission like read/update in project,
+    or super user, not allow read-only request.
+    """
+    def has_permission(self, request, view):
+        project_id = request.query_params.get("project_id", None)
+        if request.method == "POST":
+            rdk = request.data.keys()
+            if "project" in rdk:
+                project_id = request.data["project"]
+        allow_owners = []
+        for r in Role.objects.filter(project_id=project_id):
+            allow_owners.append(r.user_id)
+        view_meta = view.get_queryset().model._meta
+        method_allowed = False
+        if project_id:
+            user_permission = ObtainExpiringAuthToken.list_perms(request.user, project_id=project_id)[view_meta.model_name.lower()]
+        else:
+            user_permission = ObtainExpiringAuthToken.list_perms(request.user)[view_meta.model_name.lower()]
+        if METHODS_RELATIONS[request.method] in user_permission:
+            method_allowed = True
+
+        return bool(
+            request.user and
+            request.user.id in allow_owners and
+            method_allowed or
+            request.user.is_superuser
+        )
+
+
 class DjangoModelPermissionsWithRead(DjangoModelPermissions):
     perms_map = {
         'GET': ['%(app_label)s.view_%(model_name)s'],
