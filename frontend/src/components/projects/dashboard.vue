@@ -293,8 +293,8 @@ export default {
                   center: ['50%', '50%'],
                   roseType: 'area',
                   data: [
-                      {value: 480, name: 'Automated', color: '#8BBA72'},
-                      {value: 180, name: 'Manual', color: '#E54D42'},
+                      {value: 480, name: 'Automated'},
+                      {value: 180, name: 'Manual'},
                       {value: 200, name: 'Pending'},
                       {value: 50, name: 'Impossible'},
                       {value: 15, name: 'Unknown'}
