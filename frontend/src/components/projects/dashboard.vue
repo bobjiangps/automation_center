@@ -19,8 +19,8 @@
         </a-card>
       </a-col>
       <a-col :span="11">
-        <a-card title="To Be Changed" :style="{margin: '20px 0px'}" :headStyle="{color:'#1874CD', fontWeight: 'bold'}">
-          <div id="toBeChanged" :style="{width: '90%', height: '400px'}"></div>
+        <a-card title="Overall Error Cause" :style="{margin: '20px 0px'}" :headStyle="{color:'#1874CD', fontWeight: 'bold'}">
+          <div id="overallErrorCause" :style="{width: '100%', height: '400px'}"></div>
         </a-card>
       </a-col>
     </a-row>
@@ -36,6 +36,7 @@ export default {
       coverage_by_year_chart: '',
       coverage_by_priority_chart: '',
       overall_automation_status_chart: '',
+      overall_error_cause_chart: '',
       temp: ''
     }
   },
@@ -52,6 +53,7 @@ export default {
     this.draw_coverage_by_year_chart();
     this.draw_coverage_by_priority_chart();
     this.draw_overall_automation_status_chart();
+    this.draw_overall_error_cause_chart();
 
     var myEvent = new Event('resize');
     window.dispatchEvent(myEvent);
@@ -281,8 +283,10 @@ export default {
               formatter: '{a} <br/>{b} : {c} ({d}%)'
           },
           legend: {
-              left: 'center',
-              top: 'bottom',
+              orient: 'vertical',
+              left: 'left',
+              //left: 'center',
+              //top: 'bottom',
               data: ['Automated', 'Manual', 'Pending', 'Impossible', 'Unknown']
           },
           series: [
@@ -290,7 +294,7 @@ export default {
                   name: 'Overall Status',
                   type: 'pie',
                   radius: [30, 110],
-                  center: ['50%', '50%'],
+                  center: ['55%', '60%'],
                   roseType: 'area',
                   data: [
                       {value: 480, name: 'Automated'},
@@ -300,6 +304,44 @@ export default {
                       {value: 15, name: 'Unknown'}
                   ],
                   color: ['#8BBA72', '#E54D42', '#3A99D8', '#DCDCDC', '#000000']
+              }
+          ]
+      });
+    },
+
+    draw_overall_error_cause_chart: function() {
+      this.overall_error_cause_chart = this.$echarts.init(document.getElementById('overallErrorCause'));
+      this.overall_error_cause_chart.setOption({
+          tooltip: {
+              trigger: 'item',
+              formatter: '{a} <br/>{b} : {c} ({d}%)'
+          },
+          legend: {
+              orient: 'vertical',
+              left: 'left',
+              //top: 'bottom',
+              data: ['Found Bug', 'Product Change', 'Script Issue', 'Environment Issue', 'Data Issue']
+          },
+          series: [
+              {
+                  name: 'Error Cause',
+                  type: 'pie',
+                  radius: '55%',
+                  center: ['55%', '60%'],
+                  data: [
+                      {value: 34, name: 'Found Bug'},
+                      {value: 69, name: 'Product Change'},
+                      {value: 110, name: 'Script Issue'},
+                      {value: 357, name: 'Environment Issue'},
+                      {value: 61, name: 'Data Issue'}
+                  ],
+                  emphasis: {
+                      itemStyle: {
+                          shadowBlur: 10,
+                          shadowOffsetX: 0,
+                          shadowColor: 'rgba(0, 0, 0, 0.5)'
+                      }
+                  }
               }
           ]
       });
