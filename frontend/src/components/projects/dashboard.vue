@@ -303,7 +303,7 @@ export default {
                   name: 'Overall Status',
                   type: 'pie',
                   radius: [30, 110],
-                  center: ['55%', '60%'],
+                  center: ['50%', '60%'],
                   roseType: 'area',
                   data: [
                       {value: 480, name: 'Automated'},
@@ -312,7 +312,17 @@ export default {
                       {value: 50, name: 'Impossible'},
                       {value: 15, name: 'Unknown'}
                   ],
-                  color: ['#8BBA72', '#E54D42', '#3A99D8', '#DCDCDC', '#000000']
+                  color: ['#8BBA72', '#E54D42', '#3A99D8', '#DCDCDC', '#000000'],
+                  itemStyle: {
+                      normal:{
+                          label: {
+                              show: true,
+                              position: 'top',
+                              color: '#000',
+                              formatter: '{b} \n{d}%',
+                          }
+                      }
+                  }
               }
           ]
       });
@@ -336,7 +346,7 @@ export default {
                   name: 'Error Cause',
                   type: 'pie',
                   radius: '55%',
-                  center: ['55%', '60%'],
+                  center: ['50%', '60%'],
                   data: [
                       {value: 34, name: 'Found Bug'},
                       {value: 69, name: 'Product Change'},
@@ -349,6 +359,16 @@ export default {
                           shadowBlur: 10,
                           shadowOffsetX: 0,
                           shadowColor: 'rgba(0, 0, 0, 0.5)'
+                      }
+                  },
+                  itemStyle: {
+                      normal:{
+                          label: {
+                              show: true,
+                              position: 'top',
+                              color: '#000',
+                              formatter: '{b} \n{d}%',
+                          }
                       }
                   }
               }
