@@ -12,7 +12,7 @@
         </a-card>
       </a-col>
     </a-row>
-    <a-row type="flex" justify="space-around" :style="{margin: '0px 10px 10px 10px'}">
+    <a-row type="flex" justify="space-around" :style="{margin: '0px 10px 0px 10px'}">
       <a-col :span="11">
         <a-card title="Overall Automation Status" :style="{margin: '20px 0px'}" :headStyle="{color:'#1874CD', fontWeight: 'bold'}">
           <div id="overallAutomationStatus" :style="{width: '100%', height: '400px'}"></div>
