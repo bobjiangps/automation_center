@@ -27,6 +27,7 @@
     <a-row type="flex" justify="space-around" :style="{margin: '0px 10px 10px 10px'}">
       <a-col :span="23">
         <a-card title="Recent Regression Coverage" :style="{margin: '20px 0px'}" :headStyle="{color:'#1874CD', fontWeight: 'bold'}">
+          <img slot="extra" title="The proportion of executed automation cases to total cases in recent regressions" src="https://img.icons8.com/office/0.5x/info.png" />
           <div id="recentRegressionCoverage" :style="{width: '86%', height: '400px'}"></div>
         </a-card>
       </a-col>
