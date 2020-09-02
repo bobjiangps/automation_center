@@ -24,6 +24,13 @@
         </a-card>
       </a-col>
     </a-row>
+    <a-row type="flex" justify="space-around" :style="{margin: '0px 10px 10px 10px'}">
+      <a-col :span="23">
+        <a-card title="Recent Regression Coverage" :style="{margin: '20px 0px'}" :headStyle="{color:'#1874CD', fontWeight: 'bold'}">
+          <div id="recentRegressionCoverage" :style="{width: '86%', height: '400px'}"></div>
+        </a-card>
+      </a-col>
+    </a-row>
   </div>
 </template>
 
@@ -37,6 +44,7 @@ export default {
       coverage_by_priority_chart: '',
       overall_automation_status_chart: '',
       overall_error_cause_chart: '',
+      recent_regression_coverage_chart: '',
       temp: ''
     }
   },
@@ -54,6 +62,7 @@ export default {
     this.draw_coverage_by_priority_chart();
     this.draw_overall_automation_status_chart();
     this.draw_overall_error_cause_chart();
+    this.draw_recent_regression_coverage_chart();
 
     var myEvent = new Event('resize');
     window.dispatchEvent(myEvent);
@@ -340,6 +349,67 @@ export default {
                           shadowBlur: 10,
                           shadowOffsetX: 0,
                           shadowColor: 'rgba(0, 0, 0, 0.5)'
+                      }
+                  }
+              }
+          ]
+      });
+    },
+
+    draw_recent_regression_coverage_chart: function() {
+      this.recent_regression_coverage_chart = this.$echarts.init(document.getElementById('recentRegressionCoverage'));
+      this.recent_regression_coverage_chart.setOption({
+          color: ['#3398DB'],
+          tooltip: {
+              trigger: 'axis',
+              formatter: '{a} <br/>{b} : {c} %',
+              axisPointer: {
+                  type: 'shadow'
+              }
+          },
+          grid: {
+              left: '3%',
+              right: '4%',
+              bottom: '3%',
+              containLabel: true
+          },
+          xAxis: [
+              {
+                  type: 'category',
+                  data: ['Sprint 1 Full Regression', 'Sprint 2 Full Regression', 'Sprint 3 Full Regression', 'Sprint 4 Full Regression', 'Sprint 5 Full Regression', 'Sprint 6 Full Regression', 'Sprint 7 Full Regression', 'Sprint 8 Full Regression', 'Sprint 9 Full Regression', 'Sprint 10 Full Regression'],
+                  axisTick: {
+                      alignWithLabel: true
+                  },
+                  axisLabel: {
+                      interval: 0,
+                      formatter:function(value) {
+                          return value.replace("Full ", "Full\n")
+                      }
+                  }
+              }
+          ],
+          yAxis: [
+              {
+                  type: 'value',
+                  min: 0,
+                  max: 100,
+                  name: 'Coverage'
+              }
+          ],
+          series: [
+              {
+                  name: 'Regression Coverage',
+                  type: 'bar',
+                  barWidth: '60%',
+                  data: [37, 52, 66, 44, 51, 39, 67, 69, 57, 59],
+                  itemStyle: {
+                      normal:{
+                          label: {
+                              show: true,
+                              position: 'top',
+                              color: '#000',
+                              formatter: '{c} %'
+                          }
                       }
                   }
               }
