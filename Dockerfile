@@ -17,6 +17,8 @@ RUN apt-get update && \
 WORKDIR /automation_center
 COPY ./ ./
 RUN pip3 install -r requirement.txt
+RUN python3 manage.py makemigrations
+RUN python3 manage.py migrate
 RUN cp /etc/nginx/nginx.conf /etc/nginx/nginx.conf-default
 COPY ./config/nginx.conf /etc/nginx/nginx.conf
 
