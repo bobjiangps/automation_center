@@ -46,6 +46,9 @@ export default new Router({
       path: '/projects/:project_id',
       name: 'project',
       component: ProjectDashboard,
+      meta: {
+         breadcrumb: 'Dashboard'
+      }
       // component: Project,
       // beforeEnter: projectToDashboard,
     },

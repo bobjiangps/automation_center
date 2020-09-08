@@ -63,6 +63,18 @@
             <a v-else @click="login" :style="{ margin: '10px', padding: '5px' }">Login</a>
           </div>
         </a-layout-header>
+        <a-breadcrumb>
+          <a-breadcrumb-item href="">
+            <a-icon type="home" />
+          </a-breadcrumb-item>
+          <a-breadcrumb-item href="">
+            <a-icon type="user" />
+            <span>Application List {{this.$options.name}}</span>
+          </a-breadcrumb-item>
+          <a-breadcrumb-item>
+            {{this.$route.meta.breadcrumb}}
+          </a-breadcrumb-item>
+        </a-breadcrumb>
         <router-view/>
         <a-layout-footer style="text-align: center;">
           {{ fullCopyRight }}
