@@ -19,6 +19,8 @@ created by django + restframework + vue.js + uwsgi + nginx
 * [Django restframework加Vue打造前后端分离的网站(十三)URL和Swagger中的自定义参数](https://www.byincd.com/bobjiang/article-01113/)
 * [Django restframework加Vue打造前后端分离的网站(十四)后端模块间数据引用和展示](https://www.byincd.com/bobjiang/article-01120/)
 * [Django restframework加Vue打造前后端分离的网站(十五)多重模板](https://www.byincd.com/bobjiang/article-01122/)
+* [Django restframework加Vue打造前后端分离的网站(十六)添加面包屑导航](https://www.byincd.com/bobjiang/article-01146/)
+* [Django restframework加Vue打造前后端分离的网站(十七)封装和注册自定义组件](https://www.byincd.com/bobjiang/article-01147/)
 * ...
 
 
