@@ -1,7 +1,5 @@
 <template>
   <div :style="{backgroundColor: '#FFF', margin: '20px'}">
-    <mybreadcrumb />
-    <ownbreadcrumb />
     <a-row type="flex" justify="space-around" :style="{margin: '10px 10px 0px 10px'}">
       <a-col :span="11">
         <a-card title="Automation Coverage by Year" :style="{margin: '20px 0px'}" :headStyle="{color:'#1874CD', fontWeight: 'bold'}">
@@ -38,13 +36,7 @@
 </template>
 
 <script>
-import mybreadcrumb from '@/components/own-breadcrumb'
-
 export default {
-  components: {
-    mybreadcrumb
-  },
-
   name: 'ProjectDashboard',
   data () {
     return {

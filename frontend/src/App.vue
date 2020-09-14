@@ -63,18 +63,7 @@
             <a v-else @click="login" :style="{ margin: '10px', padding: '5px' }">Login</a>
           </div>
         </a-layout-header>
-        <a-breadcrumb>
-          <a-breadcrumb-item href="">
-            <a-icon type="home" />
-          </a-breadcrumb-item>
-          <a-breadcrumb-item href="">
-            <a-icon type="user" />
-            <span>Application List {{this.$options.name}}</span>
-          </a-breadcrumb-item>
-          <a-breadcrumb-item>
-            {{this.$route.meta.breadcrumb}}
-          </a-breadcrumb-item>
-        </a-breadcrumb>
+        <ownbreadcrumb :routes="this.breadcrumbList" />
         <router-view/>
         <a-layout-footer style="text-align: center;">
           {{ fullCopyRight }}
@@ -93,6 +82,7 @@ export default {
       rootSubmenuKeys: ['sub1', 'sub2', 'sub3'],
       openKeys: ['sub1'],
       projects: [],
+      breadcrumbList: [],
       notifications: 3,
       copyRightPrefix: "Copyright © ",
       copyRightSuffix: " BobJiang | byincd.com",
@@ -186,6 +176,15 @@ export default {
       this.$http.get(`${this.$http.defaults.baseURL}/projects/`)
         .then(response => {
           this.projects = response.data["results"];
+          for (var p of this.projects) {
+            if (p.id == this.$route.params.project_id) {
+              this.breadcrumbList.push({"path": this.projectHref(p.id), "breadcrumbName": p.name});
+              break;
+            }
+          }
+          for (var match of this.$route.matched) {
+            this.breadcrumbList.push({"path": match.path, "breadcrumbName": match.meta.breadcrumb});
+          }
         })
         .catch(err => {console.log(err)})
     },
