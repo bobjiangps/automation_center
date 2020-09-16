@@ -63,7 +63,9 @@
             <a v-else @click="login" :style="{ margin: '10px', padding: '5px' }">Login</a>
           </div>
         </a-layout-header>
-        <ownbreadcrumb :routes="this.breadcrumbList" />
+        <div id="breadcrumb">
+          <ownbreadcrumb style="margin: 15px 25px -5px; float: left;" :routes="this.breadcrumbList" />
+        </div>
         <router-view/>
         <a-layout-footer style="text-align: center;">
           {{ fullCopyRight }}

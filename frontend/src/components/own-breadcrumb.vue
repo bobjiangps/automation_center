@@ -10,7 +10,7 @@
       {{this.$route.meta.breadcrumb}}
     </a-breadcrumb-item>
   </a-breadcrumb>-->
-<a-breadcrumb style="padding: 15px 0px 0px 0px; width: 20%;" :routes="routes">
+<a-breadcrumb :routes="routes">
   <template slot="itemRender" slot-scope="{route, params, routes, paths}">
     <span v-if="routes.indexOf(route) === routes.length - 1">
       {{route.breadcrumbName}}
