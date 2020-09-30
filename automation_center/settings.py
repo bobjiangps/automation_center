@@ -34,6 +34,7 @@ SECRET_KEY = STORED['secret_key']
 DEBUG = False
 
 ALLOWED_HOSTS = ['*']
+INTERNAL_IPS = ['127.0.0.1']
 
 
 # Application definition
@@ -49,6 +50,7 @@ INSTALLED_APPS = [
     'rest_framework_swagger',
     'rest_framework.authtoken',
     'corsheaders',
+    'debug_toolbar',
     'modules.projects',
     'modules.execution',
     'modules.users'
@@ -63,6 +65,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'debug_toolbar.middleware.DebugToolbarMiddleware'
 ]
 
 ROOT_URLCONF = 'automation_center.urls'
