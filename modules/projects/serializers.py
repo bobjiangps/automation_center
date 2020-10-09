@@ -1,4 +1,4 @@
-from .models import Project
+from .models import Project, Script
 from rest_framework import serializers
 from django.contrib.auth.models import User
 
@@ -64,3 +64,10 @@ class OwnerSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = ["id", "username", "email"]
+
+
+class ScriptSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = Script
+        fields = "__all__"

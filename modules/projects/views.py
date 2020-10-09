@@ -1,5 +1,5 @@
 from .models import Project, Script, ScriptFunction, AutomatedCase
-from .serializers import ProjectSerializer
+from .serializers import ProjectSerializer, ScriptSerializer
 from rest_framework import viewsets
 
 
@@ -259,3 +259,37 @@ class MockAutomationCoverageData(APIView):
 #         print(request.data)
 #         count = {"count": Project.objects.count(), "project_id": request.data["project_id"], "user_id": request.data["user_id"]}
 #         return Response(count)
+
+class ScriptList(generics.ListCreateAPIView):
+    """
+        get:
+            Return all scripts.
+
+        post:
+            Create a new script.
+    """
+    permission_classes = [HasAssignedPermission]
+    queryset = Script.objects.all().order_by("-id")
+    serializer_class = ScriptSerializer
+    filter_backends = [filters.SearchFilter]
+    search_fields = ["name"]
+
+
+class ScriptDetail(generics.RetrieveUpdateDestroyAPIView):
+    """
+        get:
+            Return a script instance.
+
+        put:
+            Update a script.
+
+        patch:
+            Update one or more fields on an existing script.
+
+        delete:
+            Delete existing script.
+
+    """
+    permission_classes = [IsSpecifiedProject]
+    queryset = Script.objects.all()
+    serializer_class = ScriptSerializer
