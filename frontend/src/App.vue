@@ -185,7 +185,9 @@ export default {
             }
           }
           for (var match of this.$route.matched) {
-            this.breadcrumbList.push({"path": match.path, "breadcrumbName": match.meta.breadcrumb});
+            if (match.name.toLowerCase() != "project") {
+              this.breadcrumbList.push({"path": match.path, "breadcrumbName": match.meta.breadcrumb});
+            }
           }
         })
         .catch(err => {console.log(err)})
@@ -196,7 +198,14 @@ export default {
     fullCopyRight: function(){
       return this.copyRightPrefix + new Date().getFullYear() + this.copyRightSuffix;
     }
-  }
+  },
+
+  watch:{
+    $route(to,from){
+      this.breadcrumbList = [];
+      this.retrieveProjects();
+    }
+  },
 
 }
 </script>
