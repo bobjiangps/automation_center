@@ -4,6 +4,7 @@ import Home from '@/components/home'
 import Login from '@/components/login'
 import Project from '@/components/project'
 import ProjectDashboard from '@/components/projects/dashboard'
+import TestScript from '@/components/projects/test-script'
 import store from '../utils/store'
 
 Vue.use(Router)
@@ -44,14 +45,45 @@ export default new Router({
     },
     {
       path: '/projects/:project_id',
-      name: 'project',
+      name: 'project_dashboard',
       component: ProjectDashboard,
       meta: {
          breadcrumb: 'Dashboard'
-      }
+      },
       // component: Project,
       // beforeEnter: projectToDashboard,
     },
+    {
+      path: '/projects/:project_id/test-scripts',
+      name: 'test_scripts',
+      component: TestScript,
+      meta: {
+         breadcrumb: 'Test Scripts'
+      },
+    },
+//    {
+//      path: '/projects/:project_id',
+//      name: 'project',
+//      component: Project,
+//      children: [
+//        {
+//          path: '',
+//          name: 'project_dashboard',
+//          component: ProjectDashboard,
+//          meta: {
+//             breadcrumb: 'Dashboard'
+//          },
+//        },
+//        {
+//          path: 'test-scripts',
+//          name: 'test_scripts',
+//          component: TestScript,
+//          meta: {
+//             breadcrumb: 'Test Scripts'
+//          },
+//        },
+//      ]
+//    },
     {
       path: '/test',
       name: 'test',
