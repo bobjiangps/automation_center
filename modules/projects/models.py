@@ -23,6 +23,13 @@ class Script(models.Model):
 
     name = models.CharField(max_length=100)
     project = models.ForeignKey(Project, on_delete=models.CASCADE)
+    version = models.CharField(max_length=100, blank=True)
+    status = models.CharField(max_length=100, blank=True)
+    author = models.CharField(max_length=100, blank=True)
+    maintainer = models.CharField(max_length=100, blank=True)
+    file_created = models.DateField(blank=True, null=True)
+    file_updated = models.DateField(blank=True, null=True)
+    tag = models.CharField(max_length=100, blank=True)
     create_time = models.DateTimeField(default=timezone.now)
     update_time = models.DateTimeField(default=timezone.now)
 
