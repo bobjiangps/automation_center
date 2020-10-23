@@ -202,8 +202,14 @@ export default {
 
   watch:{
     $route(to,from){
-      this.breadcrumbList = [];
-      this.retrieveProjects();
+      // this.breadcrumbList = [];
+      // this.retrieveProjects();
+      this.breadcrumbList = this.breadcrumbList.slice(0, 1);
+      for (var match of this.$route.matched) {
+        if (match.name.toLowerCase() != "project") {
+          this.breadcrumbList.push({"path": match.path, "breadcrumbName": match.meta.breadcrumb});
+        }
+      }
     }
   },
 
