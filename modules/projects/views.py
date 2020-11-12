@@ -269,10 +269,14 @@ class ScriptList(generics.ListCreateAPIView):
             Create a new script.
     """
     permission_classes = [HasAssignedPermission]
-    queryset = Script.objects.all().order_by("-id")
     serializer_class = ScriptSerializer
     filter_backends = [filters.SearchFilter]
     search_fields = ["name"]
+
+    def get_queryset(self):
+        project_id = self.request.parser_context["kwargs"].get("project_id", None)
+        queryset = Script.objects.filter(project=project_id).order_by("-id")
+        return queryset
 
 
 class ScriptDetail(generics.RetrieveUpdateDestroyAPIView):
