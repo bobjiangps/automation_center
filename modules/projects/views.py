@@ -295,5 +295,9 @@ class ScriptDetail(generics.RetrieveUpdateDestroyAPIView):
 
     """
     permission_classes = [IsSpecifiedProject]
-    queryset = Script.objects.all()
     serializer_class = ScriptSerializer
+
+    def get_queryset(self):
+        project_id = self.request.parser_context["kwargs"].get("project_id", None)
+        queryset = Script.objects.filter(project=project_id).order_by("-id")
+        return queryset
