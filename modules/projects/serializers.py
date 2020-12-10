@@ -1,4 +1,4 @@
-from .models import Project, Script
+from .models import Project, Script, AutomatedCase
 from rest_framework import serializers
 from django.contrib.auth.models import User
 
@@ -70,4 +70,11 @@ class ScriptSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Script
+        fields = "__all__"
+
+
+class AutomationCaseSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = AutomatedCase
         fields = "__all__"
