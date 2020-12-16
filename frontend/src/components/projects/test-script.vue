@@ -1,6 +1,11 @@
 <template>
   <div :style="{backgroundColor: '#FFF', margin: '20px', minHeight: '640px'}">
-    <a-table :columns="tableColumns" :data-source="tableData" class="components-table-demo-nested">
+    <a-table
+      :columns="tableColumns"
+      :data-source="tableData"
+      :loading="loading"
+      class="components-table-demo-nested"
+    >
       <a slot="operation" slot-scope="text">Publish</a>
       <a-table
         slot="expandedRowRender"
@@ -40,15 +45,15 @@ export default {
       tableColumns: '',
       tableInnerData: '',
       tableInnerColumns: '',
-      scripts: ''
+      scripts: '',
+      loading: false
     };
   },
 
   created: function() {
 
-
     this.tableColumns = [
-      { title: 'Name', dataIndex: 'name', key: 'name' },
+      { title: 'Name', dataIndex: 'name', key: 'name', sorter: true, scopedSlots: { customRender: 'name' } },
       { title: 'Version', dataIndex: 'version', key: 'version' },
       { title: 'Status', dataIndex: 'status', key: 'status' },
       { title: 'Author', dataIndex: 'author', key: 'author' },
@@ -81,12 +86,14 @@ export default {
   },
 
   mounted: function() {
+    this.loading = true;
     this.$http.get(`${this.$http.defaults.baseURL}/projects/2/test-scripts/`)
       .then(response => {
         this.scripts = response.data["results"];
         for (let i = 0; i < this.scripts.length; i++) {
           var script = this.scripts[i];
           this.tableData.push({
+            key: i,
             name: script["name"],
             version: script["version"],
             status: script["status"],
@@ -95,8 +102,7 @@ export default {
             tag: script["tag"],
           });
         }
-
-
+        this.loading = false;
       })
       .catch(err => {console.log(err)})
   },
