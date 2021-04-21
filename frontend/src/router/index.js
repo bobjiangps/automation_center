@@ -43,47 +43,50 @@ export default new Router({
       component: Login,
       beforeEnter: ifNotAuthenticated,
     },
-    {
-      path: '/projects/:project_id',
-      name: 'project_dashboard',
-      component: ProjectDashboard,
-      meta: {
-         breadcrumb: 'Dashboard'
-      },
-      // component: Project,
-      // beforeEnter: projectToDashboard,
-    },
-    {
-      path: '/projects/:project_id/test-scripts',
-      name: 'test_scripts',
-      component: TestScript,
-      meta: {
-         breadcrumb: 'Test Scripts'
-      },
-    },
+
 //    {
 //      path: '/projects/:project_id',
-//      name: 'project',
-//      component: Project,
-//      children: [
-//        {
-//          path: '',
-//          name: 'project_dashboard',
-//          component: ProjectDashboard,
-//          meta: {
-//             breadcrumb: 'Dashboard'
-//          },
-//        },
-//        {
-//          path: 'test-scripts',
-//          name: 'test_scripts',
-//          component: TestScript,
-//          meta: {
-//             breadcrumb: 'Test Scripts'
-//          },
-//        },
-//      ]
+//      name: 'project_dashboard',
+//      component: ProjectDashboard,
+//      meta: {
+//         breadcrumb: 'Dashboard'
+//      },
+//      // component: Project,
+//      // beforeEnter: projectToDashboard,
 //    },
+//    {
+//      path: '/projects/:project_id/test-scripts',
+//      name: 'test_scripts',
+//      component: TestScript,
+//      meta: {
+//         breadcrumb: 'Test Scripts'
+//      },
+//    },
+
+    {
+      path: '/projects/:project_id',
+      name: 'project',
+      component: Project,
+      children: [
+        {
+          path: '',
+          name: 'project_dashboard',
+          component: ProjectDashboard,
+          meta: {
+             breadcrumb: 'Dashboard'
+          },
+        },
+        {
+          path: 'test-scripts',
+          name: 'test_scripts',
+          component: TestScript,
+          meta: {
+             breadcrumb: 'Test Scripts'
+          },
+        },
+      ]
+    },
+
     {
       path: '/test',
       name: 'test',

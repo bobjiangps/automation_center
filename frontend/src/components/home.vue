@@ -35,6 +35,9 @@
         </a-card>
       </a-col>
     </a-row>
+    <a-layout-footer style="text-align: center;">
+      {{ fullCopyRight }}
+    </a-layout-footer>
     <!--<h3>{{ msg }}</h3>
     <button type="button" @click='getProjects' :style="{ margin: '10px', padding: '5px' }">get projects</button>
     <a-button type="primary">Button</a-button>
@@ -87,7 +90,9 @@ export default {
         to: 0,
         duration: 1,
         delay: 0.2
-      }
+      },
+      copyRightPrefix: "Copyright © ",
+      copyRightSuffix: " BobJiang | byincd.com",
     }
   },
 
@@ -258,7 +263,13 @@ export default {
       //return number.toFixed(2);
       return (number || 0).toString().replace(/(\d)(?=(?:\d{3})+$)/g, "$1,");
     },
-  }
+  },
+
+  computed: {
+    fullCopyRight: function(){
+      return this.copyRightPrefix + new Date().getFullYear() + this.copyRightSuffix;
+    }
+  },
 
 }
 </script>
