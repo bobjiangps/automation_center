@@ -14,15 +14,15 @@
             </a-menu-item>
           </a-sub-menu>
           <a-sub-menu key="sub2">
-            <span slot="title"><a-icon type="project" /><span>Projects</span></span>
-            <a-menu-item v-for="(p, index) in this.projects" :key="index">
-              <a :href="projectHref(p.id)">{{p["name"]}}</a>
-            </a-menu-item>
+            <span slot="title"><a-icon type="profile" /><span>Document</span></span>
+            <a-menu-item key="1">Framework</a-menu-item>
+            <a-menu-item key="2">Platform</a-menu-item>
+            <a-menu-item key="2">Environment</a-menu-item>
           </a-sub-menu>
           <a-sub-menu key="sub3">
-            <span slot="title"><a-icon type="setting" /><span>Settings</span></span>
-            <a-menu-item key="1">Projects</a-menu-item>
-            <a-menu-item key="2">Users</a-menu-item>
+            <span slot="title"><a-icon type="control" /><span>Settings</span></span>
+            <a-menu-item key="1">Layout</a-menu-item>
+            <a-menu-item key="2">Notification</a-menu-item>
           </a-sub-menu>
         </a-menu>
       </a-layout-sider>
