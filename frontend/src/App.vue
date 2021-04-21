@@ -1,7 +1,7 @@
 <template>
   <div id="app">
     <a-layout>
-      <a-layout-header style="background: #fff; border-bottom: 1px solid #e8e8e8;">
+      <a-layout-header style="background: #fff; border-bottom: 1px solid #e8e8e8; position: fixed; z-index: 1; width: 100%;">
         <div id="header-left" style="float: left;">
           <a href="/">
             <h3><b>Automation Center</b></h3>
@@ -9,6 +9,25 @@
         </div>
         <!--<a-input-search placeholder="input keyword..." @search="onSearch" enterButton style="width: 30%; margin: 15px 30px; float: left;" />-->
         <div id="header-right" style="float: right;">
+          <a-menu mode="horizontal" :style="{ lineHeight: '64px', height: '64px', float: 'left' }">
+            <a-sub-menu key="1">
+              <span slot="title"><a-icon type="project" /><span>Projects</span></span>
+              <a-menu-item v-for="(p, index) in this.projects" :key="index">
+                <a :href="projectHref(p.id)">{{p["name"]}}</a>
+              </a-menu-item>
+            </a-sub-menu>
+            <a-menu-item key="2">
+              <a href="/workers">
+                <a-icon type="cluster"/>Workers
+              </a>
+            </a-menu-item>
+            <a-menu-item key="3">
+              <a href="/admin">
+                <a-icon type="setting"/>Admin
+              </a>
+            </a-menu-item>
+          </a-menu>
+          <a-divider type="vertical" />
           <font-awesome-layers class="fa-fw fa-1x">
             <font-awesome-icon :icon="[ 'fas', 'bell' ]" />
             <font-awesome-layers class="fa-layers-counter fa-layers-top-right">{{ notifications }}</font-awesome-layers>
@@ -23,7 +42,9 @@
           <!--<a v-else @click="login" :style="{ margin: '10px', padding: '5px' }">Login</a>-->
         </div>
       </a-layout-header>
-      <router-view/>
+      <a-layout-content :style="{ marginTop: '64px' }">
+        <router-view/>
+      </a-layout-content>
     </a-layout>
   </div>
 </template>
@@ -34,8 +55,18 @@ export default {
 
   data() {
     return {
+      projects: [],
       notifications: 3,
     };
+  },
+
+  created: function() {
+    this.$http.get(`${this.$http.defaults.baseURL}/projects/`)
+      .then(response => {
+        this.projects = response.data["results"];
+      })
+      .catch(err => {console.log(err)});
+
   },
 
   methods: {
@@ -52,6 +83,10 @@ export default {
 
     onSearch(value) {
         console.log(value + "not implement yet");
+    },
+
+    projectHref(project_id) {
+      return "/projects/" + project_id;
     },
   },
 
