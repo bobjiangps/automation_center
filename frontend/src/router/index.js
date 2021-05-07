@@ -5,6 +5,7 @@ import Login from '@/components/login'
 import Project from '@/components/project'
 import ProjectDashboard from '@/components/projects/dashboard'
 import TestScript from '@/components/projects/test-script'
+import TestReport from '@/components/projects/test-report'
 import store from '../utils/store'
 
 Vue.use(Router)
@@ -82,6 +83,14 @@ export default new Router({
           component: TestScript,
           meta: {
              breadcrumb: 'Test Scripts'
+          },
+        },
+        {
+          path: 'test-reports',
+          name: 'test_reports',
+          component: TestReport,
+          meta: {
+             breadcrumb: 'Test Reports'
           },
         },
       ]
