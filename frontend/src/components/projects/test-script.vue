@@ -87,7 +87,7 @@ export default {
 
   mounted: function() {
     this.loading = true;
-    this.$http.get(`${this.$http.defaults.baseURL}/projects/2/test-scripts/`)
+    this.$http.get(`${this.$http.defaults.baseURL}/projects/${this.$route.params.project_id}/test-scripts/`)
       .then(response => {
         this.scripts = response.data["results"];
         for (let i = 0; i < this.scripts.length; i++) {

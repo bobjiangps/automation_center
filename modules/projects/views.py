@@ -114,7 +114,7 @@ from rest_framework import generics
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import filters
-from utils.permission import IsSpecifiedProject, HasAssignedPermission, IsSuperUserOrReadOnly
+from utils.permission import IsSpecifiedProject, HasAssignedPermission, HasAssignedPermissionInProject
 from modules.users.models import Role
 
 
@@ -268,6 +268,7 @@ class ScriptList(generics.ListCreateAPIView):
         post:
             Create a new script.
     """
+    # permission_classes = [HasAssignedPermissionInProject]
     permission_classes = [HasAssignedPermission]
     serializer_class = ScriptSerializer
     filter_backends = [filters.SearchFilter]
