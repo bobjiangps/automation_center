@@ -1,5 +1,5 @@
-from .models import Project, Script, ScriptFunction, AutomatedCase
-from .serializers import ProjectSerializer, ScriptSerializer
+from .models import Project, Script, AutomatedCase
+from .serializers import ProjectSerializer, ScriptSerializer, AutomationCaseSerializer
 from rest_framework import viewsets
 
 
@@ -295,10 +295,59 @@ class ScriptDetail(generics.RetrieveUpdateDestroyAPIView):
             Delete existing script.
 
     """
-    permission_classes = [IsSpecifiedProject]
+    # permission_classes = [HasAssignedPermissionInProject]
+    # permission_classes = [IsSpecifiedProject]
+    permission_classes = [HasAssignedPermission]
     serializer_class = ScriptSerializer
 
     def get_queryset(self):
         project_id = self.request.parser_context["kwargs"].get("project_id", None)
         queryset = Script.objects.filter(project=project_id).order_by("-id")
+        return queryset
+
+
+class AutomationCaseList(generics.ListCreateAPIView):
+    """
+        get:
+            Return all automation cases of one script.
+
+        post:
+            Create a new automation case.
+    """
+    # permission_classes = [HasAssignedPermissionInProject]
+    permission_classes = [HasAssignedPermission]
+    serializer_class = AutomationCaseSerializer
+    filter_backends = [filters.SearchFilter]
+    search_fields = ["name"]
+
+    def get_queryset(self):
+        script_id = self.request.parser_context["kwargs"].get("script_id", None)
+        script = Script.objects.filter(id=script_id)[0]
+        queryset = AutomatedCase.objects.filter(script_function__in=script.scriptfunction_set.all().values_list("id"))
+        return queryset
+
+
+class AutomationCaseDetail(generics.RetrieveUpdateDestroyAPIView):
+    """
+        get:
+            Return an automation case instance.
+
+        put:
+            Update an automation case.
+
+        patch:
+            Update one or more fields on an existing automation case.
+
+        delete:
+            Delete existing automation case.
+
+    """
+    # permission_classes = [HasAssignedPermissionInProject]
+    permission_classes = [HasAssignedPermission]
+    serializer_class = AutomationCaseSerializer
+
+    def get_queryset(self):
+        script_id = self.request.parser_context["kwargs"].get("script_id", None)
+        script = Script.objects.filter(id=script_id)[0]
+        queryset = AutomatedCase.objects.filter(script_function__in=script.scriptfunction_set.all().values_list("id"))
         return queryset

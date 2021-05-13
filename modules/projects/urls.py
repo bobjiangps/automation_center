@@ -12,4 +12,6 @@ urlpatterns = [
     # path(r'in_request/', views.ExampleParameterInRequest.as_view(), name='example_parameter_in_request'),
     path(r'<int:project_id>/test-scripts/', views.ScriptList.as_view(), name='script_list'),
     path(r'<int:project_id>/test-scripts/<int:pk>/', views.ScriptDetail.as_view(), name='script_detail'),
+    path(r'<int:project_id>/test-scripts/<int:script_id>/automation-case', views.AutomationCaseList.as_view(), name='automation_case_list'),
+    path(r'<int:project_id>/test-scripts/<int:script_id>/automation-case/<int:pk>/', views.AutomationCaseDetail.as_view(), name='automation_case_detail'),
 ]
