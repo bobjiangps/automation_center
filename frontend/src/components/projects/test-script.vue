@@ -4,7 +4,10 @@
       :columns="scriptColumns"
       :data-source="scriptData"
       :loading="loading"
+      :pagination="pagination"
+      :rowKey="record => record.id"
       @expand="retrieveCases"
+      @change="handleTableChange"
       class="components-table-nested"
     >
       <span slot="customTitle"><a-icon type="check-circle" theme="twoTone" two-tone-color="#52c41a" />&ensp;&ensp;Name</span>
@@ -40,6 +43,9 @@ export default {
       caseColumns: '',
       scripts: '',
       cases: {},
+      pagination: {},
+      filterParams: {},
+      results_per_page: '',
       loading: false
     };
   },
@@ -69,15 +75,24 @@ export default {
   },
 
   methods: {
-    retrieveScripts() {
+    retrieveScripts(params = this.filterParams) {
       this.loading = true;
-      this.$http.get(`${this.$http.defaults.baseURL}/projects/${this.$route.params.project_id}/test-scripts/`)
+      this.$http.get(`${this.$http.defaults.baseURL}/projects/${this.$route.params.project_id}/test-scripts/`, { params: params })
         .then(response => {
+          const pagination = { ...this.pagination };
+          //pagination.pageSize = response.data["results"].length;
+          if (this.results_per_page == '') {
+            this.results_per_page = response.data["results"].length;
+          }
+          pagination.pageSize = this.results_per_page;
+          pagination.total = response.data["count"]
+          this.pagination = pagination;
           this.scripts = response.data["results"];
+          this.scriptData.splice(0, this.scriptData.length);
           for (let i = 0; i < this.scripts.length; i++) {
             var script = this.scripts[i];
             this.scriptData.push({
-              key: i,
+              //key: i,
               id: script["id"],
               name: script["name"],
               version: script["version"],
@@ -124,7 +139,28 @@ export default {
             .catch(err => {console.log(err)});
           }
         }
-    }
+    },
+
+    handleTableChange(pagination, filters, sorter) {
+      const pager = { ...this.pagination };
+      pager.current = pagination.current;
+      this.pagination = pager;
+      if ('order' in sorter) {
+        this.filterParams = {
+          page: pagination.current,
+          order_by: sorter.field,
+          order_type: sorter.order.split("end")[0],
+          ...filters,
+        };
+      }
+      else {
+        this.filterParams = {
+          page: pagination.current,
+          ...filters,
+        };
+      }
+      this.retrieveScripts(this.filterParams);
+    },
 
   }
 
