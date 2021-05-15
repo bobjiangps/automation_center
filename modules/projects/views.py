@@ -276,7 +276,15 @@ class ScriptList(generics.ListCreateAPIView):
 
     def get_queryset(self):
         project_id = self.request.parser_context["kwargs"].get("project_id", None)
-        queryset = Script.objects.filter(project=project_id).order_by("-id")
+        order_by = self.request.query_params.get("order_by", None)
+        order_type = self.request.query_params.get("order_type", None)
+        if order_by:
+            if order_type and order_type.lower() == "desc":
+                queryset = Script.objects.filter(project=project_id).order_by("-"+order_by)
+            else:
+                queryset = Script.objects.filter(project=project_id).order_by(order_by)
+        else:
+            queryset = Script.objects.filter(project=project_id).order_by("-id")
         return queryset
 
 
