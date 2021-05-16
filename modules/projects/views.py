@@ -1,5 +1,5 @@
-from .models import Project, Script, AutomatedCase
-from .serializers import ProjectSerializer, ScriptSerializer, AutomationCaseSerializer
+from .models import Project, Script, AutomatedCase, TestSuite
+from .serializers import ProjectSerializer, ScriptSerializer, AutomationCaseSerializer, TestSuiteSerializer
 from rest_framework import viewsets
 
 
@@ -358,4 +358,58 @@ class AutomationCaseDetail(generics.RetrieveUpdateDestroyAPIView):
         script_id = self.request.parser_context["kwargs"].get("script_id", None)
         script = Script.objects.filter(id=script_id)[0]
         queryset = AutomatedCase.objects.filter(script_function__in=script.scriptfunction_set.all().values_list("id"))
+        return queryset
+
+
+class TestSuiteList(generics.ListCreateAPIView):
+    """
+        get:
+            Return all scripts.
+
+        post:
+            Create a new script.
+    """
+    # permission_classes = [HasAssignedPermissionInProject]
+    permission_classes = [HasAssignedPermission]
+    serializer_class = TestSuiteSerializer
+    filter_backends = [filters.SearchFilter]
+    search_fields = ["name"]
+
+    def get_queryset(self):
+        project_id = self.request.parser_context["kwargs"].get("project_id", None)
+        order_by = self.request.query_params.get("order_by", None)
+        order_type = self.request.query_params.get("order_type", None)
+        if order_by:
+            if order_type and order_type.lower() == "desc":
+                queryset = TestSuite.objects.filter(project=project_id).order_by("-"+order_by)
+            else:
+                queryset = TestSuite.objects.filter(project=project_id).order_by(order_by)
+        else:
+            queryset = TestSuite.objects.filter(project=project_id).order_by("-id")
+        return queryset
+
+
+class TestSuiteDetail(generics.RetrieveUpdateDestroyAPIView):
+    """
+        get:
+            Return a script instance.
+
+        put:
+            Update a script.
+
+        patch:
+            Update one or more fields on an existing script.
+
+        delete:
+            Delete existing script.
+
+    """
+    # permission_classes = [HasAssignedPermissionInProject]
+    # permission_classes = [IsSpecifiedProject]
+    permission_classes = [HasAssignedPermission]
+    serializer_class = TestSuiteSerializer
+
+    def get_queryset(self):
+        project_id = self.request.parser_context["kwargs"].get("project_id", None)
+        queryset = TestSuite.objects.filter(project=project_id).order_by("-id")
         return queryset

@@ -14,4 +14,6 @@ urlpatterns = [
     path(r'<int:project_id>/test-scripts/<int:pk>/', views.ScriptDetail.as_view(), name='script_detail'),
     path(r'<int:project_id>/test-scripts/<int:script_id>/automation-case', views.AutomationCaseList.as_view(), name='automation_case_list'),
     path(r'<int:project_id>/test-scripts/<int:script_id>/automation-case/<int:pk>/', views.AutomationCaseDetail.as_view(), name='automation_case_detail'),
+    path(r'<int:project_id>/test-suites/', views.TestSuiteList.as_view(), name='test_suite_list'),
+    path(r'<int:project_id>/test-suites/<int:pk>/', views.TestSuiteDetail.as_view(), name='test_suite_detail'),
 ]
