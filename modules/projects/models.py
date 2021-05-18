@@ -60,9 +60,15 @@ class TestSuite(models.Model):
 
     name = models.CharField(max_length=100)
     project = models.ForeignKey(Project, on_delete=models.CASCADE)
-    script = models.ManyToManyField(Script, blank=True)
+    script = models.ManyToManyField(Script)
+    # cannot use limit_choise_to for referring to model forienkey field like limit_choices_to={'project': project}
+    # https://stackoverflow.com/questions/31578559/django-foreignkey-limit-choices-to-a-different-foreignkey-id
+    # script = models.ManyToManyField(Script, limit_choices_to={'project': 2})
     create_time = models.DateTimeField(default=timezone.now)
     update_time = models.DateTimeField(default=timezone.now)
+
+    def __str__(self):
+        return self.name
 
     class Meta:
         db_table = "projects_test_suite"

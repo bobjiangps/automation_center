@@ -82,6 +82,18 @@ class AutomationCaseSerializer(serializers.ModelSerializer):
 
 class TestSuiteSerializer(serializers.ModelSerializer):
 
+    def validate_script(self, value):
+        script_match_project = True
+        project = self.context['request'].data["project"][0]
+        for v in value:
+            if v.project_id != int(project):
+                script_match_project = False
+                break
+        if script_match_project:
+            return value
+        else:
+            raise serializers.ValidationError("Cannot select scripts from another project")
+
     class Meta:
         model = TestSuite
         fields = "__all__"
