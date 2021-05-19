@@ -9,7 +9,18 @@
       @expand="retrieveCases"
       @change="handleTableChange"
       class="components-table-nested"
+      size="middle"
     >
+      <template slot="title">
+        <div id="search" style="text-align: left; padding: 0 5px 0;">
+          <a-input-search
+            v-model="filterParams.s"
+            placeholder="search"
+            style="width: 200px;"
+            @search="searchByKeyword"
+          />
+        </div>
+      </template>
       <span slot="customTitle"><a-icon type="check-circle" theme="twoTone" two-tone-color="#52c41a" />&ensp;&ensp;Name</span>
       <span slot="tagsCustom" slot-scope="tags">
         <a-tag
@@ -44,7 +55,7 @@ export default {
       scripts: '',
       cases: {},
       pagination: {},
-      filterParams: {},
+      filterParams: { s: '' },
       results_per_page: '',
       loading: false
     };
@@ -107,6 +118,10 @@ export default {
         .catch(err => {console.log(err)});
     },
 
+    searchByKeyword() {
+      this.retrieveScripts(this.filterParams);
+    },
+
     retrieveCases(expanded, record) {
       if (expanded) {
         var retrieve = false;
@@ -145,8 +160,10 @@ export default {
       const pager = { ...this.pagination };
       pager.current = pagination.current;
       this.pagination = pager;
+      search = this.filterParams.s;
       if ('order' in sorter) {
         this.filterParams = {
+          s: search,
           page: pagination.current,
           order_by: sorter.field,
           order_type: sorter.order.split("end")[0],
@@ -155,6 +172,7 @@ export default {
       }
       else {
         this.filterParams = {
+          s: search,
           page: pagination.current,
           ...filters,
         };
