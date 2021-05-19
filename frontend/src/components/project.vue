@@ -17,7 +17,7 @@
             <span slot="title"><a-icon type="profile" /><span>Document</span></span>
             <a-menu-item key="1">Framework</a-menu-item>
             <a-menu-item key="2">Platform</a-menu-item>
-            <a-menu-item key="2">Environment</a-menu-item>
+            <a-menu-item key="3">Environment</a-menu-item>
           </a-sub-menu>
           <a-sub-menu key="sub3">
             <span slot="title"><a-icon type="control" /><span>Settings</span></span>
