@@ -4,6 +4,7 @@ import Home from '@/components/home'
 import Login from '@/components/login'
 import Project from '@/components/project'
 import ProjectDashboard from '@/components/projects/dashboard'
+import TestSuite from '@/components/projects/test-suite'
 import TestScript from '@/components/projects/test-script'
 import TestReport from '@/components/projects/test-report'
 import store from '../utils/store'
@@ -75,6 +76,14 @@ export default new Router({
           component: ProjectDashboard,
           meta: {
              breadcrumb: 'Dashboard'
+          },
+        },
+        {
+          path: 'test-suites',
+          name: 'test_suites',
+          component: TestSuite,
+          meta: {
+             breadcrumb: 'Test Suites'
           },
         },
         {
