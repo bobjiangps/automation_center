@@ -1,4 +1,4 @@
-from .models import Project, Script, AutomatedCase, TestSuite
+from .models import Project, Script, AutomatedCase, TestSuite, ScriptFunction
 from rest_framework import serializers
 from django.contrib.auth.models import User
 
@@ -93,6 +93,14 @@ class TestSuiteSerializer(serializers.ModelSerializer):
             return value
         else:
             raise serializers.ValidationError("Cannot select scripts from another project")
+
+    def to_representation(self, instance):
+        response = super().to_representation(instance)
+        response["script_amount"] = len(response["script"])
+        script_functions = ScriptFunction.objects.filter(script__in=response["script"])
+        automated_cases = AutomatedCase.objects.filter(script_function__in=script_functions)
+        response["case_amount"] = len(automated_cases)
+        return response
 
     class Meta:
         model = TestSuite

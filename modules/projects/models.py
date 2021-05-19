@@ -58,9 +58,16 @@ class AutomatedCase(models.Model):
 
 class TestSuite(models.Model):
 
+    SUITE_TYPES = (
+        ("Debug", "Debug"),
+        ("BVT", "BVT"),
+        ("Regression", "Regression")
+    )
+
     name = models.CharField(max_length=100)
     project = models.ForeignKey(Project, on_delete=models.CASCADE)
     script = models.ManyToManyField(Script)
+    suite_type = models.CharField(choices=SUITE_TYPES, default=SUITE_TYPES[0][0], max_length=100)
     # cannot use limit_choise_to for referring to model forienkey field like limit_choices_to={'project': project}
     # https://stackoverflow.com/questions/31578559/django-foreignkey-limit-choices-to-a-different-foreignkey-id
     # script = models.ManyToManyField(Script, limit_choices_to={'project': 2})
