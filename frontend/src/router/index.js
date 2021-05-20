@@ -3,8 +3,10 @@ import Router from 'vue-router'
 import Home from '@/components/home'
 import Login from '@/components/login'
 import Project from '@/components/project'
+import PageBase from '@/components/page-base'
 import ProjectDashboard from '@/components/projects/dashboard'
 import TestSuite from '@/components/projects/test-suite'
+import CreateTestSuite from '@/components/projects/create-test-suite'
 import TestScript from '@/components/projects/test-script'
 import TestReport from '@/components/projects/test-report'
 import store from '../utils/store'
@@ -80,11 +82,26 @@ export default new Router({
         },
         {
           path: 'test-suites',
-          name: 'test_suites',
-          component: TestSuite,
+          name: 'test_suites_base',
+          component: PageBase,
           meta: {
              breadcrumb: 'Test Suites'
           },
+          children: [
+            {
+              path: '',
+              name: 'test_suite',
+              component: TestSuite,
+            },
+            {
+              path: 'create',
+              name: 'create_test_suite',
+              component: CreateTestSuite,
+              meta: {
+                breadcrumb: 'Create'
+              },
+            },
+          ]
         },
         {
           path: 'test-scripts',
