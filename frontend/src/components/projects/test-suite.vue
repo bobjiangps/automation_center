@@ -10,16 +10,24 @@
       size="small"
     >
       <template slot="title">
-        <div id="search" style="text-align: left; padding: 0 5px 0;">
-          <a-input-search
-            v-model="filterParams.s"
-            placeholder="search"
-            style="width: 200px;"
-            @search="searchByKeyword"
-          />
+        <div>
+          <a-row>
+            <a-col :span="12" id="search" style="text-align: left; padding: 0 5px 0;">
+              <a-input-search
+                v-model="filterParams.s"
+                placeholder="search"
+                style="width: 200px;"
+                @search="searchByKeyword"
+              />
+            </a-col>
+            <a-col :span="12" style="text-align: right; padding: 0 10px 0;">
+              <a-button type="primary" v-if="this.$store.state.token">
+                <router-link :to="{ name: 'create_test_suite' }">Create</router-link>
+              </a-button>
+            </a-col>
+          </a-row>
         </div>
       </template>
-      <span slot="customTitle"><a-icon type="check-circle" theme="twoTone" two-tone-color="#52c41a" />&ensp;&ensp;Name</span>
     </a-table>
   </div>
 </template>
