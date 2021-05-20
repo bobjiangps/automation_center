@@ -124,8 +124,14 @@ export default {
             }
           }
           for (var match of this.$route.matched) {
-            if (match.name.toLowerCase() != "project") {
-              this.breadcrumbList.push({"path": match.path, "breadcrumbName": match.meta.breadcrumb});
+            if (match.meta && match.meta.breadcrumb) {
+              let path = match.path;
+              for (let key in this.$route.params) {
+                path = path.replace(`:${key}`, this.$route.params[key]);
+              }
+              if (match.name.toLowerCase() != "project") {
+                this.breadcrumbList.push({"path": path, "breadcrumbName": match.meta.breadcrumb});
+              }
             }
           }
         })
@@ -145,8 +151,14 @@ export default {
       // this.retrieveProjects();
       this.breadcrumbList = this.breadcrumbList.slice(0, 1);
       for (var match of this.$route.matched) {
-        if (match.name.toLowerCase() != "project") {
-          this.breadcrumbList.push({"path": match.path, "breadcrumbName": match.meta.breadcrumb});
+        if (match.meta && match.meta.breadcrumb) {
+          let path = match.path;
+          for (let key in to.params) {
+            path = path.replace(`:${key}`, to.params[key]);
+          }
+          if (match.name.toLowerCase() != "project") {
+            this.breadcrumbList.push({"path": path, "breadcrumbName": match.meta.breadcrumb});
+          }
         }
       }
     }
