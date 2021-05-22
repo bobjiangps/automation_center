@@ -413,3 +413,15 @@ class TestSuiteDetail(generics.RetrieveUpdateDestroyAPIView):
         project_id = self.request.parser_context["kwargs"].get("project_id", None)
         queryset = TestSuite.objects.filter(project=project_id).order_by("-id")
         return queryset
+
+
+class TestSuiteTypes(APIView):
+
+    queryset = TestSuite.objects.none()
+
+    def get(self, request):
+        """
+        Return test suite types.
+        """
+        suite_types = {"test_suite_types": [st[0] for st in TestSuite.SUITE_TYPES]}
+        return Response(suite_types)
