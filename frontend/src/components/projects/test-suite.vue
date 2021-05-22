@@ -34,7 +34,7 @@
 
 <script>
 export default {
-  name: 'ProjectTestScripts',
+  name: 'ProjectTestSuites',
   data() {
     return {
       suiteData: [],

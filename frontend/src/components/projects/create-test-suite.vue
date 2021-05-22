@@ -36,7 +36,7 @@
 
 <script>
 export default {
-  name: 'ProjectTestScripts',
+  name: 'ProjectCreateTestSuite',
   data() {
     return {
       formItemLayout: {
