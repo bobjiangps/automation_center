@@ -1,5 +1,5 @@
 <template>
-  <div :style="{backgroundColor: '#FFF', margin: '20px', minHeight: '640px'}">
+  <div>
     <a-table
       :columns="suiteColumns"
       :data-source="suiteData"

@@ -30,7 +30,9 @@
         <div id="breadcrumb">
           <ownbreadcrumb style="margin: 15px 25px -5px; float: left;" :routes="this.breadcrumbList" />
         </div>
-        <router-view/>
+        <a-layout-content :style="{backgroundColor: '#FFF', margin: '20px', minHeight: '640px'}">
+          <router-view/>
+        </a-layout-content>
         <a-layout-footer style="text-align: center;">
           {{ fullCopyRight }}
         </a-layout-footer>
