@@ -27,6 +27,30 @@
         ]"
         ></a-select>
       </a-form-item>
+      <a-form-item :labelCol="{ span: 3 }" :wrapperCol="{ span: 16 }" label="Scripts Selector">
+        <a-row :gutter="10">
+          <a-col :span="7">
+            <a-input v-model="filterParams.s" placeholder="Search by script name" @pressEnter="searchScripts"/>
+          </a-col>
+          <a-col :span="5">
+            <a-input v-model="filterParams.tag" placeholder="Search by tag" @pressEnter="searchScripts"/>
+          </a-col>
+          <a-col :span="5">
+            <a-select
+              v-model="filterParams.author"
+              :options="scriptAuthors"
+            />
+          </a-col>
+          <a-col :span="4">
+            <a-button @click="searchScripts" type="primary">
+              <a-icon type="search"/>
+            </a-button>
+            <a-button @click="resetSearch">
+              <a-icon type="reload"/>
+            </a-button>
+          </a-col>
+        </a-row>
+      </a-form-item>
     </a-form>
   </div>
   <div v-else>
@@ -45,13 +69,16 @@ export default {
       },
       form: this.$form.createForm(this, { name: 'coordinated' }),
       suiteTypes: [],
+      scriptAuthors: [],
+      filterParams: { s: '', tag: '', author: 'Select Author' },
       loading: false
     };
   },
 
   created: function() {
     this.loading = true;
-    this.retrieveSuiteTypes()
+    this.retrieveSuiteTypes();
+    this.retrieveScriptAuthors();
     this.loading = false;
   },
 
@@ -72,6 +99,32 @@ export default {
           }
         })
         .catch(err => {console.log(err)});
+    },
+
+    retrieveScriptAuthors() {
+      this.$http.get(`${this.$http.defaults.baseURL}/projects/${this.$route.params.project_id}/test-script-authors/`)
+        .then(response => {
+          this.scriptAuthors = [];
+          let testScriptAuthors = response.data["test_script_authors"];
+          for (let i = 0; i < testScriptAuthors.length; i++) {
+            this.scriptAuthors.push({
+              key: i,
+              value: i,
+              label: testScriptAuthors[i],
+              title: testScriptAuthors[i],
+              disabled: false
+            })
+          }
+        })
+        .catch(err => {console.log(err)});
+    },
+
+    searchScripts(e) {
+      console.log("tt");
+    },
+
+    resetSearch(e) {
+      console.log("tt");
     },
 
     createTestSuite(e) {
