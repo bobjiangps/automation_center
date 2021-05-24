@@ -1,80 +1,90 @@
 <template>
   <div v-if="this.$store.state.token">
-    <a-form id="create-test-suite" :form="form" @submit="createTestSuite">
-      <h3>Create New Test Suite</h3>
-      <a-form-item v-bind="formItemLayout" label="Name">
-        <a-input
-          v-decorator="[
-          'name',
-          {
-            rules: [{
-              required: true, message: 'Please input test suite name',
-            }]
-          }
-        ]"
-        />
-      </a-form-item>
-      <a-form-item v-bind="formItemLayout" label="Suite Type">
-        <a-select
-          :options="suiteTypes"
-          v-decorator="[
-          'suite_type_id',
-          {
-            rules: [{
-              required: true, message: 'Please select test suite type'
-            }],
-            initialValue: 1
-          }
-        ]"
-        ></a-select>
-      </a-form-item>
-      <a-form-item :labelCol="{ span: 3 }" :wrapperCol="{ span: 16 }" label="Scripts Selector">
-        <a-row :gutter="10">
-          <a-col :span="7">
-            <a-input v-model="filterParams.s" placeholder="Search by script name" @pressEnter="searchScripts"/>
-          </a-col>
-          <a-col :span="5">
-            <a-input v-model="filterParams.tag" placeholder="Search by tag" @pressEnter="searchScripts"/>
-          </a-col>
-          <a-col :span="5">
-            <a-select
-              v-model="filterParams.author"
-              :options="scriptAuthors"
-            />
-          </a-col>
-          <a-col :span="4">
-            <a-button @click="searchScripts" type="primary">
-              <a-icon type="search"/>
-            </a-button>
-            <a-button @click="resetSearch">
-              <a-icon type="reload"/>
-            </a-button>
-          </a-col>
-        </a-row>
-      </a-form-item>
-      <a-form-item :labelCol="{ span: 3 }" :wrapperCol="{ span: 16, offset: 1 }">
-        <a-transfer
-          :listStyle="{
-            width: '250px',
-            height: '300px'
-          }"
-          showSearch
-          :dataSource="scripts"
-          :targetKeys="suiteScripts"
-          @change="handleChange"
-          @search="handleSearch"
-          :render="item=>item.title"
-          v-decorator="[
-          'auto_script_ids',
-          {
-            rules: [{
-              required: true, message: 'Please select at least 1 script!',
-            }]
-          }
-        ]"
-        ></a-transfer>
-      </a-form-item>
-    </a-form>
+    <a-spin :spinning="loading">
+      <a-form id="create-test-suite" :form="form" @submit="createTestSuite">
+        <h3>Create New Test Suite</h3>
+        <a-form-item v-bind="formItemLayout" label="Name">
+          <a-input
+            v-decorator="[
+            'name',
+            {
+              rules: [{
+                required: true, message: 'Please input test suite name',
+              }]
+            }
+          ]"
+          />
+        </a-form-item>
+        <a-form-item v-bind="formItemLayout" label="Suite Type">
+          <a-select
+            :options="suiteTypes"
+            v-decorator="[
+            'suite_type',
+            {
+              rules: [{
+                required: true, message: 'Please select test suite type'
+              }],
+              initialValue: 'Debug'
+            }
+          ]"
+          ></a-select>
+        </a-form-item>
+        <a-form-item :labelCol="{ span: 3 }" :wrapperCol="{ span: 16 }" label="Scripts Selector">
+          <a-row :gutter="10">
+            <a-col :span="7">
+              <a-input v-model="filterParams.s" placeholder="Search by script name" @pressEnter="searchScripts"/>
+            </a-col>
+            <a-col :span="5">
+              <a-input v-model="filterParams.tag" placeholder="Search by tag" @pressEnter="searchScripts"/>
+            </a-col>
+            <a-col :span="5">
+              <a-select
+                v-model="filterParams.author"
+                :options="scriptAuthors"
+              />
+            </a-col>
+            <a-col :span="4">
+              <a-button @click="searchScripts" type="primary">
+                <a-icon type="search"/>
+              </a-button>
+              <a-button @click="resetSearch">
+                <a-icon type="reload"/>
+              </a-button>
+            </a-col>
+          </a-row>
+        </a-form-item>
+        <a-form-item :labelCol="{ span: 3 }" :wrapperCol="{ span: 16, offset: 1 }">
+          <a-transfer
+            :listStyle="{
+              width: '250px',
+              height: '300px'
+            }"
+            showSearch
+            :dataSource="scripts"
+            :targetKeys="suiteScripts"
+            @change="handleChange"
+            @search="handleSearch"
+            :render="item=>item.title"
+            v-decorator="[
+            'auto_script_ids',
+            {
+              rules: [{
+                required: true, message: 'Please select at least 1 script!',
+              }]
+            }
+          ]"
+          ></a-transfer>
+        </a-form-item>
+        <a-form-item :wrapper-col="{ span: 16, offset: 12 }">
+          <a-row :gutter="16">
+            <a-col :span="5">
+              <a-button type="primary" html-type="submit">Save</a-button>
+              <a-button @click="$router.go(-1)">Back</a-button>
+            </a-col>
+          </a-row>
+        </a-form-item>
+      </a-form>
+    </a-spin>
   </div>
   <div v-else>
     <h1>Login to view this page</h1>
@@ -117,7 +127,7 @@ export default {
           for (let i = 0; i < testSuiteTypes.length; i++) {
             this.suiteTypes.push({
               key: i,
-              value: i,
+              value: testSuiteTypes[i],
               label: testSuiteTypes[i],
               title: testSuiteTypes[i],
               disabled: false
@@ -159,7 +169,7 @@ export default {
           let testScripts = response.data["results"];
           for (let i = 0; i < testScripts.length; i++) {
             this.scripts.push({
-              key: i.toString(),
+              key: testScripts[i]["id"].toString(),
               title: testScripts[i]["name"],
             })
           }
@@ -188,7 +198,25 @@ export default {
       e.preventDefault();
       this.form.validateFields((err, values) => {
         if (!err) {
-          console.log('Received values of form: ', values);
+          this.loading = true;
+          const createSuiteParams = {
+            name: values.name,
+            project: this.$route.params.project_id,
+            script: values.auto_script_ids,
+            suite_type: values.suite_type
+          };
+          this.$http.post(`${this.$http.defaults.baseURL}/projects/${this.$route.params.project_id}/test-suites/`, createSuiteParams)
+            .then(response => {
+              this.$router.push({
+                name: "test_suite",
+                params: { project_id: this.$route.params.project_id }
+              });
+              this.$message.success("Save successful!");
+            })
+            .catch(err => {console.log(err)})
+            .finally(() => {
+              this.loading = false;
+            });
         }
       });
     },
