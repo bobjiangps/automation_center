@@ -1,6 +1,7 @@
 <template>
   <div v-if="this.$store.state.token">
     <a-form id="create-test-suite" :form="form" @submit="createTestSuite">
+      <h3>Create New Test Suite</h3>
       <a-form-item v-bind="formItemLayout" label="Name">
         <a-input
           v-decorator="[
@@ -51,6 +52,28 @@
           </a-col>
         </a-row>
       </a-form-item>
+      <a-form-item :labelCol="{ span: 3 }" :wrapperCol="{ span: 16, offset: 1 }">
+        <a-transfer
+          :listStyle="{
+            width: '250px',
+            height: '300px'
+          }"
+          showSearch
+          :dataSource="scripts"
+          :targetKeys="suiteScripts"
+          @change="handleChange"
+          @search="handleSearch"
+          :render="item=>item.title"
+          v-decorator="[
+          'auto_script_ids',
+          {
+            rules: [{
+              required: true, message: 'Please select at least 1 script!',
+            }]
+          }
+        ]"
+        ></a-transfer>
+      </a-form-item>
     </a-form>
   </div>
   <div v-else>
@@ -70,7 +93,9 @@ export default {
       form: this.$form.createForm(this, { name: 'coordinated' }),
       suiteTypes: [],
       scriptAuthors: [],
-      filterParams: { s: '', tag: '', author: 'Select Author' },
+      scripts: [],
+      suiteScripts: [],
+      filterParams: { s: '', tag: '', author: 'Select Author', page_size: 10000 },
       loading: false
     };
   },
@@ -79,6 +104,7 @@ export default {
     this.loading = true;
     this.retrieveSuiteTypes();
     this.retrieveScriptAuthors();
+    this.retrieveScripts();
     this.loading = false;
   },
 
@@ -109,7 +135,7 @@ export default {
           for (let i = 0; i < testScriptAuthors.length; i++) {
             this.scriptAuthors.push({
               key: i,
-              value: i,
+              value: testScriptAuthors[i],
               label: testScriptAuthors[i],
               title: testScriptAuthors[i],
               disabled: false
@@ -119,12 +145,43 @@ export default {
         .catch(err => {console.log(err)});
     },
 
-    searchScripts(e) {
-      console.log("tt");
+    retrieveScripts(params = this.filterParams) {
+      let filterParamsTemp = {};
+      for (let key in params) {
+        filterParamsTemp[key] = params[key];
+      }
+      if (filterParamsTemp["author"].indexOf("Select") != -1) {
+        delete filterParamsTemp["author"];
+      }
+      this.$http.get(`${this.$http.defaults.baseURL}/projects/${this.$route.params.project_id}/test-scripts/`, { params: filterParamsTemp })
+        .then(response => {
+          this.scripts = [];
+          let testScripts = response.data["results"];
+          for (let i = 0; i < testScripts.length; i++) {
+            this.scripts.push({
+              key: i.toString(),
+              title: testScripts[i]["name"],
+            })
+          }
+        })
+        .catch(err => {console.log(err)});
     },
 
-    resetSearch(e) {
-      console.log("tt");
+    searchScripts() {
+      this.retrieveScripts(this.filterParams);
+    },
+
+    resetSearch() {
+      this.filterParams = { s: '', tag: '', author: 'Select Author', page_size: 10000 };
+      this.retrieveScripts(this.filterParams);
+    },
+
+    handleChange(targetKeys) {
+      this.suiteScripts = targetKeys;
+    },
+
+    handleSearch(dir, value) {
+      console.log('search:', dir, value);
     },
 
     createTestSuite(e) {

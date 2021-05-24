@@ -116,6 +116,7 @@ from rest_framework.response import Response
 from rest_framework import filters
 from utils.permission import IsSpecifiedProject, HasAssignedPermission, HasAssignedPermissionInProject
 from modules.users.models import Role
+from utils.custom_pagination import LargeResultsSetPagination
 
 
 class ProjectList(generics.ListCreateAPIView):
@@ -273,6 +274,7 @@ class ScriptList(generics.ListCreateAPIView):
     serializer_class = ScriptSerializer
     filter_backends = [filters.SearchFilter]
     search_fields = ["name"]
+    pagination_class = LargeResultsSetPagination
 
     def get_queryset(self):
         project_id = self.request.parser_context["kwargs"].get("project_id", None)
