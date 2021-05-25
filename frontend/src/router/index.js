@@ -101,6 +101,14 @@ export default new Router({
                 breadcrumb: 'Create'
               },
             },
+            {
+              path: ':suite_id',
+              name: 'edit_test_suite',
+              component: CreateTestSuite,
+              meta: {
+                breadcrumb: 'Edit'
+              },
+            },
           ]
         },
         {

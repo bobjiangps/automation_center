@@ -1,8 +1,8 @@
 <template>
   <div v-if="this.$store.state.token">
     <a-spin :spinning="loading">
-      <a-form id="create-test-suite" :form="form" @submit="createTestSuite">
-        <h3>Create New Test Suite</h3>
+      <a-form id="create-test-suite" :form="form" @submit="submitSuiteForm">
+        <h3>{{header_message}}</h3>
         <a-form-item v-bind="formItemLayout" label="Name">
           <a-input
             v-decorator="[
@@ -100,21 +100,28 @@ export default {
         labelCol: { span: 3 },
         wrapperCol: { span: 6 }
       },
-      form: this.$form.createForm(this, { name: 'coordinated' }),
+      form: this.$form.createForm(this),
       suiteTypes: [],
       scriptAuthors: [],
       scripts: [],
       suiteScripts: [],
       filterParams: { s: '', tag: '', author: 'Select Author', page_size: 10000 },
+      header_message: 'Create New Test Suite',
+      currentSuiteId: '',
       loading: false
     };
   },
 
-  created: function() {
+  mounted: function() {
     this.loading = true;
     this.retrieveSuiteTypes();
     this.retrieveScriptAuthors();
     this.retrieveScripts();
+    if (Object.keys(this.$route.params).includes("suite_id")) {
+      this.header_message = "Edit Test Suite";
+      this.currentSuiteId = this.$route.params.suite_id;
+      this.retrieveSuite(this.currentSuiteId);
+    }
     this.loading = false;
   },
 
@@ -177,6 +184,21 @@ export default {
         .catch(err => {console.log(err)});
     },
 
+    retrieveSuite(id) {
+      this.$http.get(`${this.$http.defaults.baseURL}/projects/${this.$route.params.project_id}/test-suites/${this.$route.params.suite_id}/`)
+        .then(response => {
+          this.suiteScripts = response.data["script"].map(script => {
+            return script.toString();
+          });
+          this.form.setFieldsValue({
+            name: response.data["name"],
+            suite_type: response.data["suite_type"],
+            auto_script_ids: this.suiteScripts
+          });
+        })
+        .catch(err => {console.log(err)});
+    },
+
     searchScripts() {
       this.retrieveScripts(this.filterParams);
     },
@@ -194,7 +216,17 @@ export default {
       console.log('search:', dir, value);
     },
 
-    createTestSuite(e) {
+    createSuite(params) {
+      console.log("post create");
+      return this.$http.post(`${this.$http.defaults.baseURL}/projects/${this.$route.params.project_id}/test-suites/`, params);
+    },
+
+    editSuite(params) {
+      return this.$http.put(`${this.$http.defaults.baseURL}/projects/${this.$route.params.project_id}/test-suites/${this.currentSuiteId}/`, params);
+      //return this.$http.post(`${this.$http.defaults.baseURL}/projects/${this.$route.params.project_id}/test-suites/`, params);
+    },
+
+    submitSuiteForm(e) {
       e.preventDefault();
       this.form.validateFields((err, values) => {
         if (!err) {
@@ -205,13 +237,18 @@ export default {
             script: values.auto_script_ids,
             suite_type: values.suite_type
           };
-          this.$http.post(`${this.$http.defaults.baseURL}/projects/${this.$route.params.project_id}/test-suites/`, createSuiteParams)
+          let request =
+            this.currentSuiteId === ''
+              ? this.createSuite(createSuiteParams)
+              : this.editSuite(createSuiteParams);
+          console.log(request);
+          request
             .then(response => {
               this.$router.push({
                 name: "test_suite",
                 params: { project_id: this.$route.params.project_id }
               });
-              this.$message.success("Save successful!");
+              this.$message.success("Save suite successfully!");
             })
             .catch(err => {console.log(err)})
             .finally(() => {
