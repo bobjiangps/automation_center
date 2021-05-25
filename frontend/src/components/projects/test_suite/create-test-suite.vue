@@ -63,7 +63,6 @@
             :dataSource="scripts"
             :targetKeys="suiteScripts"
             @change="handleChange"
-            @search="handleSearch"
             :render="item=>item.title"
             v-decorator="[
             'auto_script_ids',
@@ -212,10 +211,6 @@ export default {
       this.suiteScripts = targetKeys;
     },
 
-    handleSearch(dir, value) {
-      console.log('search:', dir, value);
-    },
-
     createSuite(params) {
       console.log("post create");
       return this.$http.post(`${this.$http.defaults.baseURL}/projects/${this.$route.params.project_id}/test-suites/`, params);
@@ -223,7 +218,6 @@ export default {
 
     editSuite(params) {
       return this.$http.put(`${this.$http.defaults.baseURL}/projects/${this.$route.params.project_id}/test-suites/${this.currentSuiteId}/`, params);
-      //return this.$http.post(`${this.$http.defaults.baseURL}/projects/${this.$route.params.project_id}/test-suites/`, params);
     },
 
     submitSuiteForm(e) {
