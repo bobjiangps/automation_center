@@ -28,6 +28,19 @@
           </a-row>
         </div>
       </template>
+      <template slot="action" slot-scope="text, row" v-if="$store.state.token">
+        <router-link :to="{ name: 'edit_test_suite', params: { suite_id: row.id } }">
+          <a-icon type="edit" style="padding-right: 10px;"/>
+        </router-link>
+        <a-popconfirm
+          title="Are you sure delete this suite?"
+          ok-text="Yes"
+          cancel-text="No"
+          @confirm="deleteSuite(row.id)"
+        >
+          <a-icon type="delete"/>
+        </a-popconfirm>
+      </template>
     </a-table>
   </div>
 </template>
@@ -55,6 +68,9 @@ export default {
       { title: 'Script Amount', dataIndex: 'script_amount', key: 'script_amount' },
       { title: 'Case Amount', dataIndex: 'case_amount', key: 'case_amount' },
     ];
+    if (this.$store.state.token) {
+      this.suiteColumns.push({ title: 'Action', dataIndex: 'action', key: 'action', scopedSlots: { customRender: 'action' } });
+    }
 
   },
 
@@ -86,9 +102,11 @@ export default {
               case_amount: suite["case_amount"]
             });
           }
-          this.loading = false;
         })
-        .catch(err => {console.log(err)});
+        .catch(err => {console.log(err)})
+        .finally(() => {
+          this.loading = false;
+        });
     },
 
     searchByKeyword() {
@@ -117,6 +135,15 @@ export default {
         };
       }
       this.retrieveSuites(this.filterParams);
+    },
+
+    deleteSuite(id) {
+      this.$http.delete(`${this.$http.defaults.baseURL}/projects/${this.$route.params.project_id}/test-suites/${id}`)
+        .then(response => {
+          this.suiteData = this.suiteData.filter(record => record.id !== id);
+          this.$message.success("Delete suite successful!");
+        })
+        .catch(err => {console.log(err)})
     },
 
   }
