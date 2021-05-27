@@ -1,6 +1,7 @@
 from django.db import models
 from django.utils import timezone
 from django.contrib.auth.models import User
+from modules.execution.models import *
 
 
 class Project(models.Model):
@@ -26,7 +27,9 @@ class Script(models.Model):
     version = models.CharField(max_length=100, blank=True)
     status = models.CharField(max_length=100, blank=True)
     author = models.CharField(max_length=100, blank=True)
+    # author = models.ForeignKey(User)
     maintainer = models.CharField(max_length=100, blank=True)
+    # maintainer = models.ForeignKey(User)
     file_created = models.DateField(blank=True, null=True)
     file_updated = models.DateField(blank=True, null=True)
     tag = models.CharField(max_length=100, blank=True)
@@ -80,3 +83,42 @@ class TestSuite(models.Model):
     class Meta:
         db_table = "projects_test_suite"
         unique_together = ("name", "project")
+
+
+class TestRound(models.Model):
+
+    STATUS_TYPES = (
+        ("Waiting", "Waiting"),
+        ("Running", "Running"),
+        ("Completed", "Completed")
+    )
+    RESULT_TYPES = (
+        ("NotRun", "NotRun"),
+        ("Pass", "Pass"),
+        ("Fail", "Fail"),
+        ("Warning", "Warning")
+    )
+
+    name = models.CharField(max_length=100)
+    project = models.ForeignKey(Project, on_delete=models.CASCADE)
+    status_type = models.CharField(choices=STATUS_TYPES, default=STATUS_TYPES[0][0], max_length=100)
+    result_type = models.CharField(choices=RESULT_TYPES, default=RESULT_TYPES[0][0], max_length=100)
+    pass_count = models.IntegerField(default=0)
+    fail_count = models.IntegerField(default=0)
+    warning_count = models.IntegerField(default=0)
+    not_run_count = models.IntegerField(default=0)
+    test_suite = models.ForeignKey(TestSuite)
+    test_environment = models.ForeignKey(TestEnvironment)
+    browser = models.ForeignKey(Browser, blank=True, null=True)
+    device = models.ForeignKey(Device, blank=True, null=True)
+    mobile_os = models.ForeignKey(MobileOS, blank=True, null=True)
+    platform_os = models.ForeignKey(PlatformOS, blank=True, null=True)
+    creator = models.ForeignKey(User)
+    start_time = models.DateTimeField(default=timezone.now)
+    end_time = models.DateTimeField(blank=True, null=True)
+    create_time = models.DateTimeField(default=timezone.now)
+    update_time = models.DateTimeField(default=timezone.now)
+    extra_info = models.CharField(max_length=1000)
+
+    class Meta:
+        db_table = "projects_test_round"
