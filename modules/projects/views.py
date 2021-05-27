@@ -1,5 +1,5 @@
-from .models import Project, Script, AutomatedCase, TestSuite
-from .serializers import ProjectSerializer, ScriptSerializer, AutomationCaseSerializer, TestSuiteSerializer
+from .models import Project, Script, AutomatedCase, TestSuite, TestRound
+from .serializers import ProjectSerializer, ScriptSerializer, AutomationCaseSerializer, TestSuiteSerializer, TestRoundSerializer
 from rest_framework import viewsets
 
 
@@ -446,3 +446,32 @@ class TestScriptAuthors(APIView):
         # project_id = self.request.parser_context["kwargs"].get("project_id", None)
         script_authors = {"test_script_authors": set([sa.author for sa in Script.objects.filter(project=project_id)])}
         return Response(script_authors)
+
+
+class TestRoundList(generics.ListCreateAPIView):
+    """
+        get:
+            Return all test rounds.
+
+        post:
+            Create a new test round.
+    """
+    # permission_classes = [HasAssignedPermissionInProject]
+    permission_classes = [HasAssignedPermission]
+    queryset = TestRound.objects.all().order_by("-id")
+    serializer_class = TestRoundSerializer
+    filter_backends = [filters.SearchFilter]
+    search_fields = ["name", "=status_type", "=result_type"]
+
+
+class TestRoundDetail(generics.RetrieveAPIView):
+    """
+        get:
+            Return a test round instance.
+
+    """
+    # permission_classes = [HasAssignedPermissionInProject]
+    # permission_classes = [IsSpecifiedProject]
+    permission_classes = [HasAssignedPermission]
+    queryset = TestRound.objects.all()
+    serializer_class = TestRoundSerializer
