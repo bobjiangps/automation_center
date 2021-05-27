@@ -135,12 +135,19 @@ class HasAssignedPermission(BasePermission):
         try:
             view_meta = view.queryset.model._meta
         except AttributeError:
-            view_meta = view.get_queryset().model._meta
+            try:
+                view_meta = view.get_queryset().model._meta
+            except IndexError:  # solve swagger issue temporarily
+                if view.get_view_name().find("Automation Case") > -1:
+                    view_meta = "automatedcase"
         # print(view.kwargs)
 
         # project
         method_allowed = False
-        user_permission = ObtainExpiringAuthToken.list_perms(request.user)[view_meta.model_name.lower()]
+        if view_meta == "automatedcase":  # solve swagger issue temporarily
+            user_permission = ObtainExpiringAuthToken.list_perms(request.user)[view_meta.lower()]
+        else:
+            user_permission = ObtainExpiringAuthToken.list_perms(request.user)[view_meta.model_name.lower()]
         if METHODS_RELATIONS[request.method] in user_permission:
             method_allowed = True
 
