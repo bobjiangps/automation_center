@@ -118,7 +118,7 @@ class TestRound(models.Model):
     end_time = models.DateTimeField(blank=True, null=True)
     create_time = models.DateTimeField(default=timezone.now)
     update_time = models.DateTimeField(default=timezone.now)
-    extra_info = models.CharField(max_length=1000)
+    extra_info = models.CharField(max_length=1000, blank=True, null=True)
 
     class Meta:
         db_table = "projects_test_round"

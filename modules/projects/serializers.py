@@ -1,6 +1,7 @@
 from .models import Project, Script, AutomatedCase, TestSuite, ScriptFunction, TestRound
 from rest_framework import serializers
 from django.contrib.auth.models import User
+from modules.execution.models import TestEnvironment
 
 
 # class ProjectSerializer(serializers.Serializer):
@@ -112,3 +113,9 @@ class TestRoundSerializer(serializers.ModelSerializer):
     class Meta:
         model = TestRound
         fields = "__all__"
+
+    def to_representation(self, instance):
+        response = super().to_representation(instance)
+        response['creator'] = instance.creator.username
+        response["test_environment"] = instance.test_environment.name
+        return response
