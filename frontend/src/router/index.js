@@ -5,6 +5,8 @@ import Login from '@/components/login'
 import Project from '@/components/project'
 import PageBase from '@/components/page-base'
 import ProjectDashboard from '@/components/projects/dashboard'
+import TestRound from '@/components/projects/test_round/test-round'
+import CreateTestRound from '@/components/projects/test_round/create-test-round'
 import TestSuite from '@/components/projects/test_suite/test-suite'
 import CreateTestSuite from '@/components/projects/test_suite/create-test-suite'
 import TestScript from '@/components/projects/test-script'
@@ -79,6 +81,29 @@ export default new Router({
           meta: {
              breadcrumb: 'Dashboard'
           },
+        },
+        {
+          path: 'test-rounds',
+          name: 'test_rounds_base',
+          component: PageBase,
+          meta: {
+             breadcrumb: 'Test Rounds'
+          },
+          children: [
+            {
+              path: '',
+              name: 'test_round',
+              component: TestRound,
+            },
+            {
+              path: 'create',
+              name: 'create_test_round',
+              component: CreateTestRound,
+              meta: {
+                breadcrumb: 'Create'
+              },
+            },
+          ]
         },
         {
           path: 'test-suites',
