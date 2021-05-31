@@ -1,7 +1,7 @@
 <template>
   <div v-if="this.$store.state.token">
     <a-spin :spinning="loading">
-      <a-form id="create-test-suite" :form="form" @submit="submitSuiteForm">
+      <a-form id="create-test-round" :form="form" @submit="submitRoundForm">
         <h3>{{header_message}}</h3>
         <a-form-item v-bind="formItemLayout" label="Name">
           <a-input
@@ -9,70 +9,26 @@
             'name',
             {
               rules: [{
-                required: true, message: 'Please input test suite name',
+                required: true, message: 'Please input test round name',
               }]
             }
           ]"
           />
         </a-form-item>
-        <a-form-item v-bind="formItemLayout" label="Suite Type">
+        <a-form-item v-bind="formItemLayout" label="Test Suite">
           <a-select
-            :options="suiteTypes"
+            show-search
+            :options="testSuites"
             v-decorator="[
-            'suite_type',
+            'test_suite',
             {
               rules: [{
-                required: true, message: 'Please select test suite type'
+                required: true, message: 'Please select test suite'
               }],
-              initialValue: 'Debug'
+              initialValue: testSuites[0].value
             }
           ]"
           ></a-select>
-        </a-form-item>
-        <a-form-item :labelCol="{ span: 3 }" :wrapperCol="{ span: 16 }" label="Scripts Selector">
-          <a-row :gutter="10">
-            <a-col :span="7">
-              <a-input v-model="filterParams.s" placeholder="Search by script name" @pressEnter="searchScripts"/>
-            </a-col>
-            <a-col :span="5">
-              <a-input v-model="filterParams.tag" placeholder="Search by tag" @pressEnter="searchScripts"/>
-            </a-col>
-            <a-col :span="5">
-              <a-select
-                v-model="filterParams.author"
-                :options="scriptAuthors"
-              />
-            </a-col>
-            <a-col :span="4">
-              <a-button @click="searchScripts" type="primary">
-                <a-icon type="search"/>
-              </a-button>
-              <a-button @click="resetSearch">
-                <a-icon type="reload"/>
-              </a-button>
-            </a-col>
-          </a-row>
-        </a-form-item>
-        <a-form-item :labelCol="{ span: 3 }" :wrapperCol="{ span: 16, offset: 1 }">
-          <a-transfer
-            :listStyle="{
-              width: '250px',
-              height: '300px'
-            }"
-            showSearch
-            :dataSource="scripts"
-            :targetKeys="suiteScripts"
-            @change="handleChange"
-            :render="item=>item.title"
-            v-decorator="[
-            'auto_script_ids',
-            {
-              rules: [{
-                required: true, message: 'Please select at least 1 script!',
-              }]
-            }
-          ]"
-          ></a-transfer>
         </a-form-item>
         <a-form-item :wrapper-col="{ span: 16, offset: 12 }">
           <a-row :gutter="16">
@@ -92,7 +48,7 @@
 
 <script>
 export default {
-  name: 'ProjectCreateTestSuite',
+  name: 'ProjectCreateTestRound',
   data() {
     return {
       formItemLayout: {
@@ -100,48 +56,46 @@ export default {
         wrapperCol: { span: 6 }
       },
       form: this.$form.createForm(this),
+      testSuites: [{key: 0, title: ''}],
       suiteTypes: [],
       scriptAuthors: [],
       scripts: [],
       suiteScripts: [],
       filterParams: { s: '', tag: '', author: 'Select Author', page_size: 10000 },
-      header_message: 'Create New Test Suite',
-      currentSuiteId: '',
+      header_message: 'Create New Test Round',
+      currentRoundId: '',
       loading: false
     };
   },
 
   mounted: function() {
     this.loading = true;
-    this.retrieveSuiteTypes();
-    this.retrieveScriptAuthors();
-    this.retrieveScripts();
-    if (Object.keys(this.$route.params).includes("suite_id")) {
-      this.header_message = "Edit Test Suite";
-      this.currentSuiteId = this.$route.params.suite_id;
-      this.retrieveSuite(this.currentSuiteId);
-    }
+    this.retrieveTestSuites();
+    //this.retrieveSuiteTypes();
+    //this.retrieveScriptAuthors();
+    //this.retrieveScripts();
     this.loading = false;
   },
 
   methods: {
-    retrieveSuiteTypes() {
-      this.$http.get(`${this.$http.defaults.baseURL}/projects/test-suite-types/`)
+    retrieveTestSuites() {
+      this.$http.get(`${this.$http.defaults.baseURL}/projects/${this.$route.params.project_id}/test-suites/`)
         .then(response => {
-          this.suiteTypes = [];
-          let testSuiteTypes = response.data["test_suite_types"];
-          for (let i = 0; i < testSuiteTypes.length; i++) {
-            this.suiteTypes.push({
-              key: i,
-              value: testSuiteTypes[i],
-              label: testSuiteTypes[i],
-              title: testSuiteTypes[i],
+          this.testSuites = [];
+          let allTestSuites = response.data["results"];
+          for (let i = 0; i < allTestSuites.length; i++) {
+            this.testSuites.push({
+              key: allTestSuites[i]["id"],
+              value: allTestSuites[i]["name"],
+              label: allTestSuites[i]["name"],
+              title: allTestSuites[i]["name"],
               disabled: false
             })
           }
         })
         .catch(err => {console.log(err)});
     },
+
 
     retrieveScriptAuthors() {
       this.$http.get(`${this.$http.defaults.baseURL}/projects/${this.$route.params.project_id}/test-script-authors/`)
@@ -220,7 +174,17 @@ export default {
       return this.$http.put(`${this.$http.defaults.baseURL}/projects/${this.$route.params.project_id}/test-suites/${this.currentSuiteId}/`, params);
     },
 
-    submitSuiteForm(e) {
+
+    submitRoundForm(e) {
+      e.preventDefault();
+      this.form.validateFields((err, values) => {
+        if (!err) {
+          console.log(values);
+        }
+      });
+    },
+
+    submitRoundForm2(e) {
       e.preventDefault();
       this.form.validateFields((err, values) => {
         if (!err) {
@@ -258,7 +222,7 @@ export default {
 </script>
 
 <style scoped>
-#create-test-suite {
+#create-test-round {
   padding: 20px;
 }
 </style>
