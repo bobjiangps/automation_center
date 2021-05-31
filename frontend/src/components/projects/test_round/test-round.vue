@@ -29,6 +29,10 @@
           </a-row>
         </div>
       </template>
+      <template slot="number" slot-scope="index, row"> <!-- index and row and two parameters passed, can be any name you assigned; the first is the key, the second is row data; -->
+        <a-icon :type="resultIcon[row.result]" :style="{ fontSize: '120%' }" theme="twoTone" :two-tone-color="resultColor[row.result]" />
+        <span>#{{row.number}}</span>
+      </template>
       <template slot="action" slot-scope="text, row" v-if="$store.state.token">
         <a-popconfirm
           title="Are you sure stop this round?"
@@ -36,7 +40,7 @@
           cancel-text="No"
           @confirm="stopRound(row.id)"
         >
-          <a-icon type="stop" style="padding-right: 10px;"/>
+          <a-icon type="stop" theme="twoTone" two-tone-color="#CD6839" style="padding-right: 10px;"/>
         </a-popconfirm>
         <a-popconfirm
           title="Are you sure rerun this round?"
@@ -44,7 +48,7 @@
           cancel-text="No"
           @confirm="rerunRound(row.id)"
         >
-          <a-icon type="rollback"/>
+          <a-icon type="rollback" />
         </a-popconfirm>
       </template>
     </a-table>
@@ -62,6 +66,8 @@ export default {
       pagination: {},
       filterParams: { s: '' },
       results_per_page: '',
+      resultIcon: { NotRun: 'clock-circle', Pass: 'check-circle', Fail: 'close-circle', Warning: 'exclamation-circle'},
+      resultColor: { NotRun: '#B0C4DE', Pass: '#52C41A', Fail: '#FF6A6A', Warning: '#FFD700'},
       loading: false
     };
   },
@@ -69,7 +75,7 @@ export default {
   created: function() {
 
     this.roundColumns = [
-      { title: 'No.', dataIndex: 'number', key: 'number' },
+      { title: 'No.', dataIndex: 'number', key: 'number', scopedSlots: { customRender: 'number' } },
       { title: 'Name', dataIndex: 'name', key: 'name' },
       { title: 'Env', dataIndex: 'env', key: 'env' },
       { title: 'Status', dataIndex: 'status', key: 'status' },
@@ -113,6 +119,7 @@ export default {
               name: round["name"],
               env: round["test_environment"],
               status: round["status_type"],
+              result: round["result_type"],
               pass: round["pass_count"],
               fail: round["fail_count"],
               warning: round["warning_count"],
