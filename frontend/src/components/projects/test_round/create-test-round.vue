@@ -18,14 +18,15 @@
         <a-form-item v-bind="formItemLayout" label="Test Suite">
           <a-select
             show-search
+            placeholder="Select Test Suite"
             :options="testSuites"
+            optionFilterProp="children"
             v-decorator="[
             'test_suite',
             {
               rules: [{
                 required: true, message: 'Please select test suite'
               }],
-              initialValue: testSuites[0].value
             }
           ]"
           ></a-select>
@@ -56,7 +57,8 @@ export default {
         wrapperCol: { span: 6 }
       },
       form: this.$form.createForm(this),
-      testSuites: [{key: 0, title: ''}],
+      testSuites: [],
+      currentTestSuiteId: '',
       suiteTypes: [],
       scriptAuthors: [],
       scripts: [],
@@ -86,7 +88,7 @@ export default {
           for (let i = 0; i < allTestSuites.length; i++) {
             this.testSuites.push({
               key: allTestSuites[i]["id"],
-              value: allTestSuites[i]["name"],
+              value: allTestSuites[i]["id"],
               label: allTestSuites[i]["name"],
               title: allTestSuites[i]["name"],
               disabled: false
