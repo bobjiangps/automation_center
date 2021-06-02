@@ -8,7 +8,7 @@ export default new Vuex.Store({
   state: {
     status: '',
     token: localStorage.getItem('token') || '',
-    user : localStorage.getItem('user') || ''
+    user : JSON.parse(localStorage.getItem('user')) || ''
   },
 
   mutations: {
@@ -49,7 +49,7 @@ export default new Vuex.Store({
               mail: resp.data.mail
             }
             localStorage.setItem('token', token)
-            localStorage.setItem('user', user)
+            localStorage.setItem('user', JSON.stringify(user))
             axios.defaults.headers.common['Authorization'] = 'Token ' + token
             commit('auth_success_token', token)
             commit('auth_success_user', user)
@@ -58,6 +58,7 @@ export default new Vuex.Store({
           .catch(err => {
             commit('auth_error')
             localStorage.removeItem('token')
+            localStorage.removeItem('user')
             reject(err)
           })
         })
