@@ -2,7 +2,6 @@
   <div v-if="this.$store.state.token">
     <a-spin :spinning="loading">
       <a-form id="create-test-round" :form="form" @submit="submitRoundForm">
-        <h3>{{header_message}}</h3>
         <a-form-item v-bind="formItemLayout" label="Name">
           <a-input
             v-decorator="[
@@ -31,6 +30,86 @@
           ]"
           ></a-select>
         </a-form-item>
+        <a-form-item v-bind="formItemLayout" label="Test Environment">
+          <a-select
+            show-search
+            placeholder="Select Test Environment"
+            :options="environments"
+            optionFilterProp="children"
+            v-decorator="[
+            'environment',
+            {
+              rules: [{
+                required: true, message: 'Please select test environment'
+              }],
+            }
+          ]"
+          ></a-select>
+        </a-form-item>
+        <a-form-item v-bind="formItemLayout" label="Browser">
+          <a-select
+            show-search
+            placeholder="Select Browser"
+            :options="browsers"
+            optionFilterProp="children"
+            v-decorator="[
+            'browser',
+            {
+              rules: [{
+                required: true, message: 'Please select browser'
+              }],
+            }
+          ]"
+          ></a-select>
+        </a-form-item>
+        <a-form-item v-bind="formItemLayout" label="Device">
+          <a-select
+            show-search
+            placeholder="Select Device"
+            :options="devices"
+            optionFilterProp="children"
+            v-decorator="[
+            'device',
+            {
+              rules: [{
+                required: true, message: 'Please select device'
+              }],
+            }
+          ]"
+          ></a-select>
+        </a-form-item>
+        <a-form-item v-bind="formItemLayout" label="Mobile OS">
+          <a-select
+            show-search
+            placeholder="Select Mobile OS"
+            :options="mobile_os"
+            optionFilterProp="children"
+            v-decorator="[
+            'mobile_os',
+            {
+              rules: [{
+                required: true, message: 'Please select mobile os'
+              }],
+            }
+          ]"
+          ></a-select>
+        </a-form-item>
+        <a-form-item v-bind="formItemLayout" label="Platform OS">
+          <a-select
+            show-search
+            placeholder="Select Platform OS"
+            :options="platform_os"
+            optionFilterProp="children"
+            v-decorator="[
+            'platform_os',
+            {
+              rules: [{
+                required: true, message: 'Please select platform os'
+              }],
+            }
+          ]"
+          ></a-select>
+        </a-form-item>
         <a-form-item :wrapper-col="{ span: 16, offset: 12 }">
           <a-row :gutter="16">
             <a-col :span="5">
@@ -53,19 +132,16 @@ export default {
   data() {
     return {
       formItemLayout: {
-        labelCol: { span: 3 },
+        labelCol: { span: 9 },
         wrapperCol: { span: 6 }
       },
       form: this.$form.createForm(this),
       testSuites: [],
-      currentTestSuiteId: '',
-      suiteTypes: [],
-      scriptAuthors: [],
-      scripts: [],
-      suiteScripts: [],
-      filterParams: { s: '', tag: '', author: 'Select Author', page_size: 10000 },
-      header_message: 'Create New Test Round',
-      currentRoundId: '',
+      environments: [],
+      devices: [],
+      browsers: [],
+      mobile_os: [],
+      platform_os: [],
       loading: false
     };
   },
@@ -73,9 +149,7 @@ export default {
   mounted: function() {
     this.loading = true;
     this.retrieveTestSuites();
-    //this.retrieveSuiteTypes();
-    //this.retrieveScriptAuthors();
-    //this.retrieveScripts();
+    this.retrieveExecutionInfo();
     this.loading = false;
   },
 
@@ -98,84 +172,67 @@ export default {
         .catch(err => {console.log(err)});
     },
 
-
-    retrieveScriptAuthors() {
-      this.$http.get(`${this.$http.defaults.baseURL}/projects/${this.$route.params.project_id}/test-script-authors/`)
+    retrieveExecutionInfo() {
+      this.$http.get(`${this.$http.defaults.baseURL}/execution/`)
         .then(response => {
-          this.scriptAuthors = [];
-          let testScriptAuthors = response.data["test_script_authors"];
-          for (let i = 0; i < testScriptAuthors.length; i++) {
-            this.scriptAuthors.push({
-              key: i,
-              value: testScriptAuthors[i],
-              label: testScriptAuthors[i],
-              title: testScriptAuthors[i],
+          let env_info = response.data["env"];
+          let device_info = response.data["devices"];
+          let browser_info = response.data["browsers"];
+          let mobile_os_info = response.data["mobile_os"];
+          let platform_os_info = response.data["platform_os"];
+          this.environments = [];
+          for (let i = 0; i < env_info.length; i++) {
+            this.environments.push({
+              key: env_info[i]["id"],
+              value: env_info[i]["id"],
+              label: env_info[i]["value"],
+              title: env_info[i]["value"],
+              disabled: false
+            })
+          }
+          this.devices = [];
+          for (let i = 0; i < device_info.length; i++) {
+            this.devices.push({
+              key: device_info[i]["id"],
+              value: device_info[i]["id"],
+              label: device_info[i]["value"],
+              title: device_info[i]["value"],
+              disabled: false
+            })
+          }
+          this.browsers = [];
+          for (let i = 0; i < browser_info.length; i++) {
+            this.browsers.push({
+              key: browser_info[i]["id"],
+              value: browser_info[i]["id"],
+              label: browser_info[i]["value"],
+              title: browser_info[i]["value"],
+              disabled: false
+            })
+          }
+          this.mobile_os = [];
+          for (let i = 0; i < mobile_os_info.length; i++) {
+            this.mobile_os.push({
+              key: mobile_os_info[i]["id"],
+              value: mobile_os_info[i]["id"],
+              label: mobile_os_info[i]["value"],
+              title: mobile_os_info[i]["value"],
+              disabled: false
+            })
+          }
+          this.platform_os = [];
+          for (let i = 0; i < platform_os_info.length; i++) {
+            this.platform_os.push({
+              key: platform_os_info[i]["id"],
+              value: platform_os_info[i]["id"],
+              label: platform_os_info[i]["value"],
+              title: platform_os_info[i]["value"],
               disabled: false
             })
           }
         })
         .catch(err => {console.log(err)});
     },
-
-    retrieveScripts(params = this.filterParams) {
-      let filterParamsTemp = {};
-      for (let key in params) {
-        filterParamsTemp[key] = params[key];
-      }
-      if (filterParamsTemp["author"].indexOf("Select") != -1) {
-        delete filterParamsTemp["author"];
-      }
-      this.$http.get(`${this.$http.defaults.baseURL}/projects/${this.$route.params.project_id}/test-scripts/`, { params: filterParamsTemp })
-        .then(response => {
-          this.scripts = [];
-          let testScripts = response.data["results"];
-          for (let i = 0; i < testScripts.length; i++) {
-            this.scripts.push({
-              key: testScripts[i]["id"].toString(),
-              title: testScripts[i]["name"],
-            })
-          }
-        })
-        .catch(err => {console.log(err)});
-    },
-
-    retrieveSuite(id) {
-      this.$http.get(`${this.$http.defaults.baseURL}/projects/${this.$route.params.project_id}/test-suites/${this.$route.params.suite_id}/`)
-        .then(response => {
-          this.suiteScripts = response.data["script"].map(script => {
-            return script.toString();
-          });
-          this.form.setFieldsValue({
-            name: response.data["name"],
-            suite_type: response.data["suite_type"],
-            auto_script_ids: this.suiteScripts
-          });
-        })
-        .catch(err => {console.log(err)});
-    },
-
-    searchScripts() {
-      this.retrieveScripts(this.filterParams);
-    },
-
-    resetSearch() {
-      this.filterParams = { s: '', tag: '', author: 'Select Author', page_size: 10000 };
-      this.retrieveScripts(this.filterParams);
-    },
-
-    handleChange(targetKeys) {
-      this.suiteScripts = targetKeys;
-    },
-
-    createSuite(params) {
-      console.log("post create");
-      return this.$http.post(`${this.$http.defaults.baseURL}/projects/${this.$route.params.project_id}/test-suites/`, params);
-    },
-
-    editSuite(params) {
-      return this.$http.put(`${this.$http.defaults.baseURL}/projects/${this.$route.params.project_id}/test-suites/${this.currentSuiteId}/`, params);
-    },
-
 
     submitRoundForm(e) {
       e.preventDefault();

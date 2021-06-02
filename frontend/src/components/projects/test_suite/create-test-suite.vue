@@ -2,7 +2,6 @@
   <div v-if="this.$store.state.token">
     <a-spin :spinning="loading">
       <a-form id="create-test-suite" :form="form" @submit="submitSuiteForm">
-        <h3>{{header_message}}</h3>
         <a-form-item v-bind="formItemLayout" label="Name">
           <a-input
             v-decorator="[
@@ -105,7 +104,6 @@ export default {
       scripts: [],
       suiteScripts: [],
       filterParams: { s: '', tag: '', author: 'Select Author', page_size: 10000 },
-      header_message: 'Create New Test Suite',
       currentSuiteId: '',
       loading: false
     };
