@@ -36,7 +36,7 @@
           <!--Bob Jiang
           <img src="./assets/niming-no-gender.png" style="margin: 5px; width: 30px; height: 30px; border-radius: 50%;">-->
           <img v-if="this.$store.state.token" src="./assets/niming-no-gender.png" style="margin: 5px; width: 30px; height: 30px; border-radius: 50%;">
-          <span v-if="this.$store.state.token">Hi, {{ this.$store.state.user }}</span>
+          <span v-if="this.$store.state.token">Hi, {{ this.$store.state.user.name }}</span>
           <a v-if="this.$store.state.token" @click="logout" :style="{ margin: '10px', padding: '5px' }">Logout</a>
           <router-link v-else to="/login" :style="{ margin: '10px', padding: '5px' }">Login</router-link>
           <!--<a v-else @click="login" :style="{ margin: '10px', padding: '5px' }">Login</a>-->
