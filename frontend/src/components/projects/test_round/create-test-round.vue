@@ -46,54 +46,6 @@
           ]"
           ></a-select>
         </a-form-item>
-        <a-form-item v-bind="formItemLayout" label="Browser">
-          <a-select
-            show-search
-            placeholder="Select Browser"
-            :options="browsers"
-            optionFilterProp="children"
-            v-decorator="[
-            'browser',
-            {
-              rules: [{
-                required: true, message: 'Please select browser'
-              }],
-            }
-          ]"
-          ></a-select>
-        </a-form-item>
-        <a-form-item v-bind="formItemLayout" label="Device">
-          <a-select
-            show-search
-            placeholder="Select Device"
-            :options="devices"
-            optionFilterProp="children"
-            v-decorator="[
-            'device',
-            {
-              rules: [{
-                required: true, message: 'Please select device'
-              }],
-            }
-          ]"
-          ></a-select>
-        </a-form-item>
-        <a-form-item v-bind="formItemLayout" label="Mobile OS">
-          <a-select
-            show-search
-            placeholder="Select Mobile OS"
-            :options="mobile_os"
-            optionFilterProp="children"
-            v-decorator="[
-            'mobile_os',
-            {
-              rules: [{
-                required: true, message: 'Please select mobile os'
-              }],
-            }
-          ]"
-          ></a-select>
-        </a-form-item>
         <a-form-item v-bind="formItemLayout" label="Platform OS">
           <a-select
             show-search
@@ -109,6 +61,46 @@
             }
           ]"
           ></a-select>
+        </a-form-item>
+        <span>* If web testing, please select one browser type to run script</span>
+        <a-form-item v-bind="formItemLayout" label="Browser">
+          <a-select
+            show-search
+            placeholder="Select Browser"
+            :options="browsers"
+            optionFilterProp="children"
+            v-decorator="[
+            'browser',
+            ]"
+          ></a-select>
+        </a-form-item>
+        <span>* If mobile testing, please select device and mobile system to run script</span>
+        <a-form-item v-bind="formItemLayout" label="Device">
+          <a-select
+            show-search
+            placeholder="Select Device"
+            :options="devices"
+            optionFilterProp="children"
+            v-decorator="[
+            'device',
+            ]"
+          ></a-select>
+        </a-form-item>
+        <a-form-item v-bind="formItemLayout" label="Mobile OS">
+          <a-select
+            show-search
+            placeholder="Select Mobile OS"
+            :options="mobile_os"
+            optionFilterProp="children"
+            v-decorator="[
+            'mobile_os',
+            ]"
+          ></a-select>
+        </a-form-item>
+        <a-form-item v-bind="formItemLayout" label="Extra Info">
+          <a-input v-decorator="[
+              'extra_info'
+            ]" />
         </a-form-item>
         <a-form-item :wrapper-col="{ span: 16, offset: 12 }">
           <a-row :gutter="16">
@@ -234,38 +226,42 @@ export default {
         .catch(err => {console.log(err)});
     },
 
+    createRound(params) {
+      return this.$http.post(`${this.$http.defaults.baseURL}/projects/${this.$route.params.project_id}/test-rounds/`, params);
+    },
+
     submitRoundForm(e) {
       e.preventDefault();
       this.form.validateFields((err, values) => {
         if (!err) {
-          console.log(values);
-        }
-      });
-    },
-
-    submitRoundForm2(e) {
-      e.preventDefault();
-      this.form.validateFields((err, values) => {
-        if (!err) {
           this.loading = true;
-          const createSuiteParams = {
+          let createRoundParams = {
             name: values.name,
             project: this.$route.params.project_id,
-            script: values.auto_script_ids,
-            suite_type: values.suite_type
-          };
-          let request =
-            this.currentSuiteId === ''
-              ? this.createSuite(createSuiteParams)
-              : this.editSuite(createSuiteParams);
-          console.log(request);
-          request
+            test_suite: values.test_suite,
+            test_environment: values.environment,
+            platform_os: values.platform_os,
+            creator: this.$store.state.user.id
+          }
+          if (values.browser) {
+            createRoundParams.browser = values.browser;
+          }
+          if (values.device) {
+            createRoundParams.device = values.device;
+          }
+          if (values.mobile_os) {
+            createRoundParams.mobile_os = values.mobile_os;
+          }
+          if (values.extra_info) {
+            createRoundParams.extra_info = values.extra_info;
+          }
+          this.createRound(createRoundParams)
             .then(response => {
               this.$router.push({
-                name: "test_suite",
+                name: "test_round",
                 params: { project_id: this.$route.params.project_id }
               });
-              this.$message.success("Save suite successfully!");
+              this.$message.success("Save round successfully!");
             })
             .catch(err => {console.log(err)})
             .finally(() => {
