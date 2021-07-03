@@ -463,6 +463,26 @@ class TestRoundList(generics.ListCreateAPIView):
     filter_backends = [filters.SearchFilter]
     search_fields = ["name", "=status_type", "=result_type"]
 
+    def post(self, request, *args, **kwargs):
+        round_result = super(TestRoundList, self).post(request, *args, **kwargs)
+        round_data = round_result.data
+        from automation_center.settings import REDIS_CONN
+        from redis import Redis
+        from rq import Queue
+        from rq.job import Job
+        from modules.projects.test_data import TestData
+        import time
+
+        redis_conn = Redis(host=REDIS_CONN["host"], password=REDIS_CONN["pw"])
+        q_pending = Queue("pending", connection=redis_conn)
+        job = Job.create(TestData.test_round_data, connection=redis_conn, id=f"round_{round_data['id']}-worker_any-{int(time.time())}")  # update the worker name
+        job.save()
+        job.meta["test_round"] = round_data
+        job.save_meta()
+        q_pending.enqueue_job(job)
+        # return self.create(request, *args, **kwargs)
+        return round_result
+
 
 class TestRoundDetail(generics.RetrieveAPIView):
     """

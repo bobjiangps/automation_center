@@ -106,6 +106,11 @@ DATABASES = {
     }
 }
 
+REDIS_CONN = {
+    'host': 'localhost',
+    'pw': STORED['redis_pw']
+}
+
 
 # Password validation
 # https://docs.djangoproject.com/en/3.0/ref/settings/#auth-password-validators
